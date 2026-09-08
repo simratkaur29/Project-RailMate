@@ -1,0 +1,464 @@
+/* Community Page */
+.community-page {
+  padding-bottom: 3rem;
+}
+
+.community-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Announcement Card */
+.announcement-card {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border-left: 4px solid var(--accent);
+}
+
+.announcement-card .icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.announcement-card h4 {
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 4px;
+  font-size: 0.98rem;
+}
+
+.announcement-card p {
+  color: var(--text-light);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.announcement-card .date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* Review Card */
+.review-card {
+  padding: 1.5rem;
+}
+
+.review-card .review-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.review-card .reviewer {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.review-card .review-train {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.review-card .review-body {
+  color: var(--text-light);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.review-card .review-date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Review Form */
+.review-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.review-form h3 {
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.rating-input {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.rating-input span {
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.rating-input span:hover {
+  transform: scale(1.2);
+}
+
+/* Community Post */
+.post-card {
+  padding: 1.25rem 1.5rem;
+}
+
+.post-card .post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.post-card .post-user {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.95rem;
+}
+
+.post-card .post-date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.post-card .post-body {
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.post-card .post-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.post-card .like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.post-card .like-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--error);
+}
+
+.post-card .like-btn.liked {
+  color: var(--error);
+}
+
+.post-card .delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  transition: var(--transition);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.post-card .delete-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--error);
+}
+
+/* Post Form */
+.post-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.post-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+  min-height: 80px;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+}
+
+.post-form textarea:focus {
+  outline: none;
+  border-color: var(--secondary);
+}
+
+.community-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Station Guide */
+.station-page {
+  padding-bottom: 3rem;
+}
+
+.station-search {
+  margin-bottom: 2rem;
+}
+
+.station-search input {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.station-search input:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(29, 112, 162, 0.15);
+}
+
+.station-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.station-card {
+  padding: 1.5rem;
+}
+
+.station-card .station-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.station-card .station-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.station-card .station-city {
+  color: var(--text-light);
+  font-size: 0.88rem;
+  margin-top: 2px;
+}
+
+.station-card .station-code {
+  background: var(--primary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.station-card .station-platforms {
+  color: var(--text-light);
+  font-size: 0.88rem;
+  margin-bottom: 12px;
+}
+
+.station-card .facilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.station-card .facility-tag {
+  background: rgba(29, 112, 162, 0.08);
+  color: var(--secondary);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.station-card .station-transport {
+  font-size: 0.88rem;
+  color: var(--text-light);
+  margin-bottom: 10px;
+}
+
+.station-card .station-transport strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.station-card .station-tips {
+  background: rgba(244, 185, 66, 0.1);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.5;
+  border-left: 3px solid var(--accent);
+}
+
+/* Smart Assistant */
+.assistant-page {
+  padding-bottom: 3rem;
+}
+
+.assistant-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.assistant-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.category-btn {
+  padding: 1rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.category-btn:hover {
+  border-color: var(--secondary);
+  background: rgba(29, 112, 162, 0.04);
+}
+
+.category-btn.active {
+  border-color: var(--primary);
+  background: rgba(18, 53, 91, 0.06);
+  color: var(--primary);
+}
+
+.category-btn .cat-icon {
+  font-size: 1.8rem;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.assistant-response {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+}
+
+.assistant-response h3 {
+  color: var(--primary);
+  margin-bottom: 1rem;
+  font-size: 1.15rem;
+}
+
+.assistant-response ul {
+  list-style: none;
+}
+
+.assistant-response ul li {
+  padding: 8px 0;
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.assistant-response ul li:last-child {
+  border-bottom: none;
+}
+
+.assistant-response ul li::before {
+  content: '✓';
+  color: var(--success);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Railway Tips Page */
+.tips-page {
+  padding-bottom: 3rem;
+}
+
+.tips-category {
+  margin-bottom: 2.5rem;
+}
+
+.tips-category h2 {
+  font-size: 1.3rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+  display: inline-block;
+}
+
+.tips-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.tip-card {
+  padding: 1.5rem;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.tip-card .tip-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.tip-card h4 {
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.tip-card p {
+  color: var(--text-light);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .station-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .assistant-categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

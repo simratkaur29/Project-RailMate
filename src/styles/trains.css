@@ -1,0 +1,169 @@
+/* Train Search Page */
+.trains-page {
+  padding-bottom: 3rem;
+}
+
+.trains-search-bar {
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.trains-search-bar .form-group {
+  flex: 1;
+  min-width: 180px;
+  margin-bottom: 0;
+}
+
+.trains-results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.train-result-count {
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+/* Train Card */
+.train-card {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.train-card-info {
+  flex: 1;
+  min-width: 250px;
+}
+
+.train-card-info .train-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 2px;
+}
+
+.train-card-info .train-number {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.train-route {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.train-route .station {
+  font-weight: 500;
+}
+
+.train-route .time {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.train-route .route-line {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  position: relative;
+  max-width: 120px;
+}
+
+.train-route .route-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--secondary);
+}
+
+.train-route .route-line::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.train-duration {
+  color: var(--text-light);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.train-card-classes {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.train-card-price {
+  text-align: right;
+  min-width: 130px;
+}
+
+.train-card-price .price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.train-card-price .price-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .trains-search-bar {
+    flex-direction: column;
+  }
+
+  .trains-search-bar .form-group {
+    min-width: 100%;
+  }
+
+  .trains-search-bar .btn {
+    width: 100%;
+  }
+
+  .train-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .train-card-price {
+    text-align: left;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+}
