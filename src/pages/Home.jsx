@@ -24,7 +24,7 @@ function Home() {
 
   return (
     <main>
-      {/* Hero Section */}
+      { }
       <section className="hero">
         <div className="container hero-content">
           <h1>Your Smart <span className="accent">Railway</span> Travel Companion</h1>
