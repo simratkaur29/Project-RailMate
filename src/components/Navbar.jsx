@@ -29,7 +29,7 @@ function Navbar({ user, onLogout }) {
             <NavLink to="/" onClick={() => setMenuOpen(false)}>Home</NavLink>
             <NavLink to="/trains" onClick={() => setMenuOpen(false)}>Trains</NavLink>
             <NavLink to="/stations" onClick={() => setMenuOpen(false)}>Station Guide</NavLink>
-            <NavLink to="/assistant" onClick={() => setMenuOpen(false)}>Smart Assistant</NavLink>
+            <NavLink to="/assistant" onClick={() => setMenuOpen(false)}>Travel Assistant</NavLink>
             <NavLink to="/community" onClick={() => setMenuOpen(false)}>Community</NavLink>
             <NavLink to="/tips" onClick={() => setMenuOpen(false)}>Railway Tips</NavLink>
             {user && (
