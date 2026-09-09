@@ -10,7 +10,7 @@ function StationCard({ station }) {
       </div>
 
       <div className="station-platforms">
-        🚉 {station.platforms} Platforms
+        🚉 {station.platforms} Platforms.
       </div>
 
       <div className="facilities">
