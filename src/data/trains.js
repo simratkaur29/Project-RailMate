@@ -5,7 +5,7 @@ const trains = [
     number: "12011",
     source: "Chandigarh",
     destination: "New Delhi",
-    departure: "06:15",
+    departure: "06:30",
     arrival: "09:20",
     duration: "3h 05m",
     price: 850,
