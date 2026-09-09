@@ -38,7 +38,7 @@ function Footer() {
               <li><span>📧 support@railmate.in</span></li>
               <li><span>📞 139 (Railway Helpline)</span></li>
               <li><span>📞 182 (RPF Helpline)</span></li>
-              <li><span>📍 New Delhi, India</span></li>
+              <li><span>📍 Mumbai, India</span></li>
             </ul>
           </div>
         </div>
