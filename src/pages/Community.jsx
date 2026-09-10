@@ -103,7 +103,7 @@ function Community({ user }) {
     <main className="community-page">
       <div className="page-header">
         <h1>👥 Community</h1>
-        <p>Connect with fellow travelers and stay updated</p>
+        <p>Connect with fellow travelers and stay updated.</p>
       </div>
 
       <div className="container community-content">
@@ -186,6 +186,7 @@ function Community({ user }) {
               </form>
             </div>
 
+
             <div className="community-list">
               {reviews.map((review) => (
                 <ReviewCard key={review.id} review={review} />
@@ -235,6 +236,7 @@ function Community({ user }) {
           </div>
         )}
       </div>
+      
     </main>
   );
 }
