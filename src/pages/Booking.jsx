@@ -22,7 +22,7 @@ function Booking({ user }) {
       <main className="booking-page">
         <div className="page-header">
           <h1>🎫 Book Your Ticket</h1>
-          <p>Select a train first to proceed with booking</p>
+          <p>Select a train first to proceed with booking.</p>
         </div>
         <div className="container">
           <div className="empty-state">
@@ -79,6 +79,7 @@ function Booking({ user }) {
     setConfirmed(true);
   };
 
+  
   if (confirmed && bookingData) {
     return (
       <main className="booking-page">
