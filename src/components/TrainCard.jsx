@@ -40,10 +40,10 @@ function TrainCard({ train, onBook }) {
       </div>
 
       <div className="train-card-price">
-        <div className="price-label">Starting from</div>
+        <div className="price-label">Starting From</div>
         <div className="price">₹{train.price}</div>
         <button className="btn btn-accent" onClick={handleBook} style={{ marginTop: 10 }}>
-          Book Now
+          Book now
         </button>
       </div>
     </div>
