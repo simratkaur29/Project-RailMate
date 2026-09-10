@@ -5,8 +5,10 @@ function TipCard({ tip }) {
       <div>
         <h4>{tip.title}</h4>
         <p>{tip.description}</p>
+
       </div>
     </div>
+    
   );
 }
 

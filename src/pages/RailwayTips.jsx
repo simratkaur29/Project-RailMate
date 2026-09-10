@@ -14,7 +14,7 @@ function RailwayTips() {
     <main className="tips-page">
       <div className="page-header">
         <h1>💡 Railway Tips</h1>
-        <p>Essential tips for a safe and comfortable railway journey</p>
+        <p>Essential tips for a safe and comfortable railway journey </p>
       </div>
 
       <div className="container">
@@ -28,6 +28,7 @@ function RailwayTips() {
             </div>
           </div>
         ))}
+
       </div>
     </main>
   );

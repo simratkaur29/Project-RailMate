@@ -10,7 +10,7 @@ function StationCard({ station }) {
       </div>
 
       <div className="station-platforms">
-        🚉 {station.platforms} Platforms.
+        🚉 {station.platforms} Platforms
       </div>
 
       <div className="facilities">
@@ -20,7 +20,7 @@ function StationCard({ station }) {
       </div>
 
       <div className="station-transport">
-        <strong>Nearby Transport:</strong> {station.nearbyTransport.join(', ')}
+        <strong>Nearby transport:</strong> {station.nearbyTransport.join(', ')}
       </div>
 
       <div className="station-tips">

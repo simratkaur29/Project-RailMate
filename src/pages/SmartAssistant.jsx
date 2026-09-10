@@ -37,10 +37,11 @@ const assistantData = {
       "Avoid unauthorized porters — use only IRCTC-approved coolies with red uniforms.",
     ],
   },
+
   safety: {
     title: "Railway Safety Tips",
     tips: [
-      "Never board or exit a moving train — wait for it to stop completely.",
+      "Never board or exit a moving train — wait for it to stop completely .",
       "Do not lean out of windows or stand near open doors during the journey.",
       "Keep emergency numbers handy — Railway Helpline: 139, RPF: 182.",
       "Report any suspicious activity or unattended luggage to the TTE or RPF immediately.",
@@ -96,7 +97,7 @@ function SmartAssistant() {
     <main className="assistant-page">
       <div className="page-header">
         <h1>🤖 Smart Travel Assistant</h1>
-        <p>Get helpful suggestions for your railway journey</p>
+        <p>Get helpful suggestions for your railway journey.</p>
       </div>
 
       <div className="container assistant-container">
