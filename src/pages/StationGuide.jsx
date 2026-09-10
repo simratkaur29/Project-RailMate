@@ -15,7 +15,7 @@ function StationGuide() {
   return (
     <main className="station-page">
       <div className="page-header">
-        <h1>🚉 Station Guide</h1>
+        <h1> 🚉 Station Guide</h1>
         <p>Explore railway stations across India</p>
       </div>
 
@@ -46,6 +46,7 @@ function StationGuide() {
             </div>
           )}
         </div>
+        
       </div>
     </main>
   );
