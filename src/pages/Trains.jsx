@@ -51,7 +51,7 @@ function Trains() {
     <main className="trains-page">
       <div className="page-header">
         <h1>🔍 Search Trains</h1>
-        <p>Find the perfect train for your journey</p>
+        <p>Find the perfect train for your journey.</p>
       </div>
 
       <div className="container">
@@ -90,7 +90,7 @@ function Trains() {
         </form>
 
         <p className="train-result-count">
-          Showing <strong>{filteredTrains.length}</strong> train{filteredTrains.length !== 1 ? 's' : ''}
+          Showing <strong>{filteredTrains.length}</strong> Train{filteredTrains.length !== 1 ? 's' : ''}
         </p>
 
         <div className="trains-results">
