@@ -54,6 +54,7 @@ function Trains() {
         <p>Find the perfect train for your journey.</p>
       </div>
 
+
       <div className="container">
         <form className="trains-search-bar" onSubmit={handleSearch}>
           <div className="form-group">

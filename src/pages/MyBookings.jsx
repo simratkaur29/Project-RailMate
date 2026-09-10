@@ -38,7 +38,7 @@ function MyBookings({ user }) {
             <div className="empty-state">
               <div className="icon">🎫</div>
               <h3>No bookings yet</h3>
-              <p>Search for trains and book your first ticket!</p>
+              <p>Search for trains and book your first ticket! </p>
               <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => navigate('/trains')}>
                 Search Trains
               </button>
@@ -79,6 +79,7 @@ function MyBookings({ user }) {
           )}
         </div>
       </div>
+
     </main>
   );
 }
