@@ -79,7 +79,7 @@ function MyBookings({ user }) {
           )}
         </div>
       </div>
-      
+
     </main>
   );
 }
