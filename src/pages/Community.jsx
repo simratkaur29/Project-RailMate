@@ -5,11 +5,12 @@ import reviewsData from '../data/reviews';
 import '../styles/community.css';
 
 const announcements = [
-  { id: 1, icon: '📢', title: 'Vande Bharat Service Extended', description: 'New Vande Bharat Express service launched on the Delhi-Jaipur route starting October 2026.', date: '2026-09-05' },
+  { id: 1, icon: '📢', title: 'Vande Bharat Service Extended', description: 'New Vande Bharat Express service launched on the Delhi-Jaipur route starting October 2026.', date: '2026-10-05' },
   { id: 2, icon: '⚠️', title: 'Platform Change Notice', description: 'Rajdhani Express (12309) will depart from Platform 5 instead of Platform 3 from Sept 10-15.', date: '2026-09-03' },
   { id: 3, icon: '🔧', title: 'Track Maintenance Alert', description: 'Trains on the Mumbai-Pune route may experience delays of 30-45 mins due to scheduled maintenance.', date: '2026-09-01' },
   { id: 4, icon: '🎉', title: 'Festive Season Booking Open', description: 'Special trains for Diwali season are now available for booking. Book early to avoid waitlisting!', date: '2026-08-28' },
 ];
+
 
 const railwayTips = [
   { id: 1, tip: 'Arrive at the station at least 30 minutes before departure to find your coach and settle in.' },
@@ -240,5 +241,6 @@ function Community({ user }) {
     </main>
   );
 }
+
 
 export default Community;
