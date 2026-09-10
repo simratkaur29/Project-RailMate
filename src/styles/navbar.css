@@ -103,7 +103,6 @@
   }
 }
 
-/* Tablets - switch to hamburger menu */
 @media (max-width: 900px) {
   .mobile-toggle {
     display: block;
