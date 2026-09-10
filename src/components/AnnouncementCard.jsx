@@ -5,7 +5,7 @@ function AnnouncementCard({ announcement }) {
       <div>
         <h4>{announcement.title}</h4>
         <p>{announcement.description}</p>
-        <div className="date">📅 {announcement.date}</div>
+        <div className="date"> 📅 {announcement.date}</div>
       </div>
     </div>
   );
