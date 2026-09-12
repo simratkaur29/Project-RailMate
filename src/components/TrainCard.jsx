@@ -43,7 +43,7 @@ function TrainCard({ train, onBook }) {
         <div className="price-label">Starting From</div>
         <div className="price">₹{train.price}</div>
         <button className="btn btn-accent" onClick={handleBook} style={{ marginTop: 10 }}>
-          Book now
+          Book Now
         </button>
       </div>
     </div>
