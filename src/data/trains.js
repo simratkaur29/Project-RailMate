@@ -8,7 +8,7 @@ const trains = [
     departure: "06:25",
     arrival: "09:20",
     duration: "2h 55m",
-    price: 850,
+    price: 900,
     classes: ["CC", "EC"],
   },
   {
