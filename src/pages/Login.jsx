@@ -82,7 +82,7 @@ function Login({ onLogin }) {
             {errors.password && <div className="form-error">{errors.password}</div>}
           </div>
 
-          <button type="submit" className="btn btn-primary">Login</button>
+          <button type="Submit" className="btn btn-primary">Login</button>
         </form>
 
         <p className="auth-link">
