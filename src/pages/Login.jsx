@@ -10,7 +10,7 @@ function Login({ onLogin }) {
   const validate = () => {
     const newErrors = {};
     if (!form.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Invalid email format';
+    else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Invalid e-mail format';
     if (!form.password) newErrors.password = 'Password is required';
     else if (form.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
     return newErrors;
@@ -86,7 +86,7 @@ function Login({ onLogin }) {
         </form>
 
         <p className="auth-link">
-          Don't have an account? <Link to="/register">Register here</Link>
+          Don't have an account? <Link to="/register">Register Here</Link>
         </p>
       </div>
     </main>
