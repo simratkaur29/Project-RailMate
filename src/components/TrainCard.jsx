@@ -1,14 +1,22 @@
 import { useNavigate } from 'react-router-dom';
+import { useJourney } from '../context/JourneyContext';
 
 function TrainCard({ train, onBook }) {
   const navigate = useNavigate();
+  const { setSelectedTrain } = useJourney();
 
   const handleBook = () => {
     if (onBook) {
       onBook(train);
     } else {
+      setSelectedTrain(train);
       navigate('/booking', { state: { train } });
     }
+  };
+
+  const handleExplore = () => {
+    setSelectedTrain(train);
+    navigate(`/destination/${encodeURIComponent(train.destination)}`);
   };
 
   return (
@@ -42,9 +50,14 @@ function TrainCard({ train, onBook }) {
       <div className="train-card-price">
         <div className="price-label">Starting From</div>
         <div className="price">₹{train.price}</div>
-        <button className="btn btn-accent" onClick={handleBook} style={{ marginTop: 10 }}>
-          Book Now
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 10 }}>
+          <button className="btn btn-accent btn-sm" onClick={handleBook}>
+            Book Now
+          </button>
+          <button className="btn btn-outline btn-sm" onClick={handleExplore}>
+            🗺️ Explore Destination
+          </button>
+        </div>
       </div>
     </div>
   );

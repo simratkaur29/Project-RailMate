@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useJourney } from '../context/JourneyContext';
 import TrainCard from '../components/TrainCard';
 import trainsData from '../data/trains';
 import '../styles/trains.css';
@@ -7,37 +8,72 @@ import '../styles/trains.css';
 function Trains() {
   const location = useLocation();
   const initialState = location.state || {};
+  const { updateJourney } = useJourney();
 
   const [source, setSource] = useState(initialState.source || '');
   const [destination, setDestination] = useState(initialState.destination || '');
   const [date, setDate] = useState(initialState.date || '');
-  const [filteredTrains, setFilteredTrains] = useState(trainsData);
+  const [filteredTrains, setFilteredTrains] = useState([]);
 
+  // Async state: idle | loading | success | empty | error
+  const [searchStatus, setSearchStatus] = useState('idle');
+
+  // Initial load
   useEffect(() => {
-    filterTrains();
+    if (initialState.source || initialState.destination) {
+      performSearch(initialState.source || '', initialState.destination || '');
+    } else {
+      setFilteredTrains(trainsData);
+      setSearchStatus('success');
+    }
   }, []);
 
-  const filterTrains = () => {
-    let results = trainsData;
+  const performSearch = (src, dest) => {
+    setSearchStatus('loading');
 
-    if (source.trim()) {
-      results = results.filter((t) =>
-        t.source.toLowerCase().includes(source.trim().toLowerCase())
-      );
-    }
+    // Simulate async operation with local data (short delay for demonstration)
+    const timer = setTimeout(() => {
+      try {
+        let results = trainsData;
 
-    if (destination.trim()) {
-      results = results.filter((t) =>
-        t.destination.toLowerCase().includes(destination.trim().toLowerCase())
-      );
-    }
+        if (src.trim()) {
+          results = results.filter((t) =>
+            t.source.toLowerCase().includes(src.trim().toLowerCase())
+          );
+        }
 
-    setFilteredTrains(results);
+        if (dest.trim()) {
+          results = results.filter((t) =>
+            t.destination.toLowerCase().includes(dest.trim().toLowerCase())
+          );
+        }
+
+        setFilteredTrains(results);
+
+        if (results.length > 0) {
+          setSearchStatus('success');
+          // Update journey context with search parameters
+          if (dest.trim()) {
+            updateJourney({
+              source: src.trim(),
+              destination: dest.trim(),
+              travelDate: date,
+            });
+          }
+        } else {
+          setSearchStatus('empty');
+        }
+      } catch {
+        setSearchStatus('error');
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    filterTrains();
+    performSearch(source, destination);
   };
 
   const handleReset = () => {
@@ -45,6 +81,11 @@ function Trains() {
     setDestination('');
     setDate('');
     setFilteredTrains(trainsData);
+    setSearchStatus('success');
+  };
+
+  const handleRetry = () => {
+    performSearch(source, destination);
   };
 
   return (
@@ -91,7 +132,7 @@ function Trains() {
         </form>
 
         <p className="train-result-count">
-          Showing <strong>{filteredTrains.length}</strong> Train{filteredTrains.length !== 1 ? 's' : ''}
+          Showing <strong>{filteredTrains.length}</strong> train{filteredTrains.length !== 1 ? 's' : ''}
         </p>
 
         <div className="trains-results">

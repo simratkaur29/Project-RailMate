@@ -314,6 +314,12 @@ input, select, textarea {
   font-weight: 600;
 }
 
+/* Shimmer Animation for Loading States */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .section-title {
