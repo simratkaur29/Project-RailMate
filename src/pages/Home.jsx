@@ -116,6 +116,34 @@ function Home() {
         </div>
       </section>
 
+      {/* Popular Destinations */}
+      <section className="tips-preview">
+        <div className="container">
+          <h2 className="section-title">Popular Destinations</h2>
+          <p className="section-subtitle">Explore our destination travel guides</p>
+
+          <div className="features-grid">
+            {[
+              { name: 'New Delhi', tagline: 'The Heart of India', icon: '🏛️' },
+              { name: 'Jaipur', tagline: 'The Pink City', icon: '🏰' },
+              { name: 'Mumbai', tagline: 'The City of Dreams', icon: '🌊' },
+              { name: 'Amritsar', tagline: 'The Golden Temple City', icon: '🕌' },
+            ].map((dest) => (
+              <Link
+                key={dest.name}
+                to={`/destination/${encodeURIComponent(dest.name)}`}
+                className="feature-card card"
+                style={{ textDecoration: 'none', cursor: 'pointer' }}
+              >
+                <div className="icon">{dest.icon}</div>
+                <h3>{dest.name}</h3>
+                <p>{dest.tagline}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Travel Tips Preview */}
       <section className="tips-preview">
         <div className="container">

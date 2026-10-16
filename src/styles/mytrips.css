@@ -1,0 +1,412 @@
+/* ===== My Trips Page ===== */
+.mytrips-page {
+  padding-bottom: 3rem;
+}
+
+.mytrips-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Trip Section Cards */
+.trip-section {
+  margin-bottom: 2rem;
+}
+
+.trip-section-card {
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.trip-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.trip-section-header .section-icon {
+  font-size: 1.4rem;
+}
+
+.trip-section-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+  flex: 1;
+}
+
+.trip-section-header .section-count {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Journey Summary */
+.journey-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.journey-detail {
+  padding: 12px;
+  background: var(--background);
+  border-radius: var(--radius-sm);
+}
+
+.journey-detail label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  display: block;
+}
+
+.journey-detail p {
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-top: 4px;
+  color: var(--text);
+}
+
+/* Saved Attraction Items */
+.saved-attractions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.saved-attraction-item {
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.saved-attraction-item .sa-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.saved-attraction-item .sa-info {
+  flex: 1;
+}
+
+.saved-attraction-item .sa-info h4 {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.saved-attraction-item .sa-info .sa-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.saved-attraction-item .sa-info .sa-meta span {
+  margin-right: 10px;
+}
+
+/* Checklist */
+.checklist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.92rem;
+}
+
+.checklist-item:hover {
+  background: var(--background);
+}
+
+.checklist-item .check-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+  font-size: 0.75rem;
+  color: white;
+}
+
+.checklist-item.checked .check-box {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.checklist-item.checked .check-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.checklist-item .check-text {
+  color: var(--text);
+  line-height: 1.4;
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.quick-action-btn {
+  padding: 1rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.quick-action-btn:hover {
+  border-color: var(--secondary);
+  background: rgba(29, 112, 162, 0.04);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.quick-action-btn .qa-icon {
+  font-size: 1.6rem;
+}
+
+.quick-action-btn .qa-label {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--primary);
+}
+
+/* Empty Trip State */
+.trip-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.trip-empty .empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.trip-empty p {
+  color: var(--text-light);
+  font-size: 0.92rem;
+}
+
+/* Enhanced Smart Assistant Styles */
+.assistant-form-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.assistant-form-section h3 {
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.assistant-form-section .form-subtitle {
+  color: var(--text-light);
+  font-size: 0.88rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.interests-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.interest-chip {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: var(--transition);
+  color: var(--text-light);
+}
+
+.interest-chip:hover {
+  border-color: var(--secondary);
+}
+
+.interest-chip.selected {
+  border-color: var(--accent);
+  background: rgba(244, 185, 66, 0.12);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Travel Plan Sections */
+.travel-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.plan-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.plan-section-header {
+  background: rgba(18, 53, 91, 0.04);
+  padding: 12px 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.plan-section-header .ps-icon {
+  font-size: 1.2rem;
+}
+
+.plan-section-header h4 {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.98rem;
+}
+
+.plan-section-body {
+  padding: 1.25rem 1.5rem;
+}
+
+.plan-section-body ul {
+  list-style: none;
+}
+
+.plan-section-body ul li {
+  padding: 6px 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.plan-section-body ul li::before {
+  content: '•';
+  color: var(--secondary);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.plan-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+/* Journey Banner inside Assistant */
+.journey-banner {
+  background: linear-gradient(135deg, rgba(18, 53, 91, 0.06), rgba(29, 112, 162, 0.06));
+  border: 1px solid rgba(29, 112, 162, 0.2);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.journey-banner .jb-icon {
+  font-size: 1.4rem;
+}
+
+.journey-banner .jb-info {
+  flex: 1;
+}
+
+.journey-banner .jb-info strong {
+  color: var(--primary);
+}
+
+.journey-banner .jb-info span {
+  color: var(--text-light);
+  font-size: 0.88rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trip-section-card {
+    padding: 1.25rem;
+  }
+
+  .journey-summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quick-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .saved-attraction-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .plan-actions {
+    flex-direction: column;
+  }
+
+  .plan-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .journey-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -32,6 +32,7 @@ function Navbar({ user, onLogout }) {
             <NavLink to="/assistant" onClick={() => setMenuOpen(false)}>Travel Assistant</NavLink>
             <NavLink to="/community" onClick={() => setMenuOpen(false)}>Community</NavLink>
             <NavLink to="/tips" onClick={() => setMenuOpen(false)}>Railway Tips</NavLink>
+            <NavLink to="/my-trips" onClick={() => setMenuOpen(false)}>My Trips</NavLink>
             {user && (
               <NavLink to="/my-bookings" onClick={() => setMenuOpen(false)}>My Bookings</NavLink>
             )}

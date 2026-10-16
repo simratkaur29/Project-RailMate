@@ -18,7 +18,18 @@ function Footer() {
               <li><Link to="/trains">Search Trains</Link></li>
               <li><Link to="/stations">Station Guide</Link></li>
               <li><Link to="/assistant">Smart Assistant</Link></li>
+              <li><Link to="/my-trips">My Trips</Link></li>
               <li><Link to="/my-bookings">My Bookings</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4>Destinations</h4>
+            <ul>
+              <li><Link to="/destination/New Delhi">New Delhi</Link></li>
+              <li><Link to="/destination/Jaipur">Jaipur</Link></li>
+              <li><Link to="/destination/Mumbai">Mumbai</Link></li>
+              <li><Link to="/destination/Amritsar">Amritsar</Link></li>
             </ul>
           </div>
 
