@@ -18,9 +18,30 @@ function DestinationGuide() {
   // Decode the URL parameter
   const decodedName = decodeURIComponent(destinationName || '');
 
+  const regionMap = {
+    maharashtra: 'Mumbai',
+    rajasthan: 'Jaipur',
+    up: 'Varanasi',
+    'uttar pradesh': 'Varanasi',
+    'tamil nadu': 'Chennai',
+    karnataka: 'Bangalore',
+    bengal: 'Kolkata',
+    'west bengal': 'Kolkata',
+    himachal: 'Shimla',
+    'himachal pradesh': 'Shimla',
+    jammu: 'Kashmir',
+    'jammu and kashmir': 'Kashmir',
+    gujarat: 'Ahmedabad',
+    kerala: 'Kochi',
+    bihar: 'Patna',
+  };
+
+  const rawKey = decodedName.trim().toLowerCase();
+  const resolvedName = regionMap[rawKey] || decodedName;
+
   // Find matching destination (case-insensitive)
   const destination = destinations.find(
-    (d) => d.name.toLowerCase() === decodedName.toLowerCase()
+    (d) => d.name.toLowerCase() === rawKey || d.name.toLowerCase() === resolvedName.toLowerCase()
   );
 
   // ---- Local State ----

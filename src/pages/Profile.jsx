@@ -251,7 +251,7 @@ function Profile({ user, onLogin, onLogout }) {
                 <div key={p.id} className="passenger-card card">
                   <div className="passenger-info">
                     <h4>{p.name}</h4>
-                    <p>Age: {p.age} | {p.gender} | {p.seatPreference} | {p.idType}</p>
+                    <p>age: {p.age} | {p.gender} | {p.seatPreference} | {p.idType}</p>
                   </div>
                   <div className="passenger-actions">
                     <button className="btn btn-outline btn-sm" onClick={() => handleEditPassenger(index)}>✏️ Edit</button>

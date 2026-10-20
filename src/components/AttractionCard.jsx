@@ -11,9 +11,24 @@ function AttractionCard({ attraction, destinationName, isSaved, onToggleSave }) 
   };
 
   const icon = categoryIcons[attraction.category] || '📍';
+  const imageSrc = attraction.image || `/images/attractions/${attraction.id}.jpg`;
 
   return (
     <div className="attraction-card card">
+      {imageSrc && (
+        <div className="attraction-image-wrapper">
+          <img
+            src={imageSrc}
+            alt={attraction.name}
+            className="attraction-photo"
+            loading="lazy"
+            onError={(e) => {
+              // Hide image if failed to load
+              e.currentTarget.parentElement.style.display = 'none';
+            }}
+          />
+        </div>
+      )}
       <div className="attraction-card-header">
         <span className="attraction-icon">{icon}</span>
         <span className="badge badge-primary">{attraction.category}</span>

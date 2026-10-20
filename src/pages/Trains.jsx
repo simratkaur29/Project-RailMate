@@ -28,23 +28,88 @@ function Trains() {
     }
   }, []);
 
+  // Map states & regions to their key cities and variations
+  const stateAliases = {
+    punjab: ['amritsar', 'chandigarh', 'ludhiana', 'jalandhar', 'firozpur', 'punjab'],
+    maharashtra: ['mumbai', 'pune', 'nagpur', 'csmt', 'bombay'],
+    rajasthan: ['jaipur', 'udaipur', 'jodhpur', 'ajmer'],
+    delhi: ['new delhi', 'delhi', 'ndls', 'dli', 'hazrat nizamuddin'],
+    up: ['varanasi', 'agra', 'lucknow', 'kanpur', 'prayagraj', 'banaras', 'kashi'],
+    'uttar pradesh': ['varanasi', 'agra', 'lucknow', 'kanpur', 'prayagraj', 'banaras', 'kashi'],
+    karnataka: ['bangalore', 'bengaluru', 'mysore'],
+    'tamil nadu': ['chennai', 'madras', 'coimbatore'],
+    telangana: ['hyderabad', 'secunderabad'],
+    bengal: ['kolkata', 'howrah', 'calcutta'],
+    'west bengal': ['kolkata', 'howrah', 'calcutta'],
+    bihar: ['patna'],
+    goa: ['goa', 'madgaon', 'vasco'],
+    kashmir: ['kashmir', 'srinagar', 'jammu', 'katra'],
+    himachal: ['shimla', 'kalka', 'manali'],
+    gujarat: ['ahmedabad', 'surat', 'vadodara'],
+    kerala: ['kochi', 'cochin', 'thiruvananthapuram', 'trivandrum'],
+  };
+
+  const typoMap = {
+    mubai: 'mumbai',
+    mumbay: 'mumbai',
+    bombay: 'mumbai',
+    pnjab: 'punjab',
+    panjab: 'punjab',
+    punajb: 'punjab',
+    dehli: 'delhi',
+    dilli: 'delhi',
+    amritasr: 'amritsar',
+    amristar: 'amritsar',
+    chandhigarh: 'chandigarh',
+    chandi: 'chandigarh',
+    calcutta: 'kolkata',
+    benglore: 'bangalore',
+    bengaluru: 'bangalore',
+    channai: 'chennai',
+    madras: 'chennai',
+  };
+
+  const normalizeQuery = (text) => {
+    const clean = (text || '').trim().toLowerCase();
+    return typoMap[clean] || clean;
+  };
+
+  const matchesTerm = (fieldValue, query) => {
+    if (!query) return true;
+    const q = normalizeQuery(query);
+    const target = (fieldValue || '').toLowerCase();
+
+    if (target.includes(q)) return true;
+    if (stateAliases[q] && stateAliases[q].some((alias) => target.includes(alias))) return true;
+
+    for (const [state, cities] of Object.entries(stateAliases)) {
+      if (cities.includes(q) && target.includes(state)) return true;
+    }
+    return false;
+  };
+
   const performSearch = (src, dest) => {
     setSearchStatus('loading');
 
-    // Simulate async operation with local data (short delay for demonstration)
     const timer = setTimeout(() => {
       try {
         let results = trainsData;
 
         if (src.trim()) {
-          results = results.filter((t) =>
-            t.source.toLowerCase().includes(src.trim().toLowerCase())
+          const normSrc = normalizeQuery(src);
+          results = results.filter(
+            (t) =>
+              matchesTerm(t.source, normSrc) ||
+              (t.name && normalizeQuery(t.name).includes(normSrc))
           );
         }
 
         if (dest.trim()) {
-          results = results.filter((t) =>
-            t.destination.toLowerCase().includes(dest.trim().toLowerCase())
+          const normDest = normalizeQuery(dest);
+          results = results.filter(
+            (t) =>
+              matchesTerm(t.destination, normDest) ||
+              (t.name && normalizeQuery(t.name).includes(normDest))
           );
         }
 
@@ -52,7 +117,6 @@ function Trains() {
 
         if (results.length > 0) {
           setSearchStatus('success');
-          // Update journey context with search parameters
           if (dest.trim()) {
             updateJourney({
               source: src.trim(),
@@ -66,7 +130,7 @@ function Trains() {
       } catch {
         setSearchStatus('error');
       }
-    }, 500);
+    }, 400);
 
     return () => clearTimeout(timer);
   };
@@ -88,32 +152,46 @@ function Trains() {
     performSearch(source, destination);
   };
 
+  const popularStations = [
+    'New Delhi', 'Mumbai', 'Punjab', 'Amritsar', 'Chandigarh',
+    'Agra', 'Goa', 'Jaipur', 'Varanasi', 'Kolkata',
+    'Bangalore', 'Chennai', 'Hyderabad', 'Pune', 'Kashmir',
+    'Shimla', 'Kochi', 'Udaipur', 'Ahmedabad', 'Patna'
+  ];
+
   return (
     <main className="trains-page">
+      <datalist id="stations-list">
+        {popularStations.map((st) => (
+          <option key={st} value={st} />
+        ))}
+      </datalist>
+
       <div className="page-header">
         <h1>🔍 Search Trains</h1>
-        <p>Find the perfect train for your journey.</p>
+        <p>Find the perfect train for your journey across India.</p>
       </div>
-
 
       <div className="container">
         <form className="trains-search-bar" onSubmit={handleSearch}>
           <div className="form-group">
-            <label htmlFor="search-source">From Station</label>
+            <label htmlFor="search-source">From Station / City</label>
             <input
               id="search-source"
               type="text"
-              placeholder="e.g. New Delhi"
+              list="stations-list"
+              placeholder="e.g. Mumbai"
               value={source}
               onChange={(e) => setSource(e.target.value)}
             />
           </div>
           <div className="form-group">
-            <label htmlFor="search-dest">To Station</label>
+            <label htmlFor="search-dest">To Station / State</label>
             <input
               id="search-dest"
               type="text"
-              placeholder="e.g. Mumbai"
+              list="stations-list"
+              placeholder="e.g. Punjab"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
             />
