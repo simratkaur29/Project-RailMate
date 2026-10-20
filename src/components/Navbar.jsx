@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useFoodCart } from '../context/FoodCartContext';
 import '../styles/navbar.css';
 
 function Navbar({ user, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { itemCount } = useFoodCart();
 
   const handleLogout = () => {
     onLogout();
@@ -32,6 +34,10 @@ function Navbar({ user, onLogout }) {
             <NavLink to="/assistant" onClick={() => setMenuOpen(false)}>Travel Assistant</NavLink>
             <NavLink to="/community" onClick={() => setMenuOpen(false)}>Community</NavLink>
             <NavLink to="/tips" onClick={() => setMenuOpen(false)}>Railway Tips</NavLink>
+            <NavLink to="/station-bites" onClick={() => setMenuOpen(false)} style={{ position: 'relative' }}>
+              Station Bites
+              {itemCount > 0 && <span className="nav-cart-badge">{itemCount}</span>}
+            </NavLink>
             <NavLink to="/my-trips" onClick={() => setMenuOpen(false)}>My Trips</NavLink>
             {user && (
               <NavLink to="/my-bookings" onClick={() => setMenuOpen(false)}>My Bookings</NavLink>

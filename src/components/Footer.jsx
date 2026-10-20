@@ -17,6 +17,7 @@ function Footer() {
             <ul>
               <li><Link to="/trains">Search Trains</Link></li>
               <li><Link to="/stations">Station Guide</Link></li>
+              <li><Link to="/station-bites">Station Bites</Link></li>
               <li><Link to="/assistant">Smart Assistant</Link></li>
               <li><Link to="/my-trips">My Trips</Link></li>
               <li><Link to="/my-bookings">My Bookings</Link></li>
