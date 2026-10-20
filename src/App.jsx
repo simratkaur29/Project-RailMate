@@ -22,6 +22,7 @@ import RestaurantMenu from './pages/RestaurantMenu';
 import FoodCart from './pages/FoodCart';
 import FoodCheckout from './pages/FoodCheckout';
 import MyOrders from './pages/MyOrders';
+import LoginPromptModal from './components/LoginPromptModal';
 import './styles/global.css';
 import './styles/profile.css';
 
@@ -75,6 +76,7 @@ function App() {
               <Route path="/station-bites/orders" element={<MyOrders />} />
             </Routes>
             <Footer />
+            <LoginPromptModal user={user} />
           </div>
         </FoodCartProvider>
       </JourneyProvider>
