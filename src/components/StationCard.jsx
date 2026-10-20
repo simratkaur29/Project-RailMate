@@ -1,4 +1,16 @@
+import { useNavigate } from 'react-router-dom';
+
 function StationCard({ station }) {
+  const navigate = useNavigate();
+
+  const handleSearchTrains = () => {
+    navigate('/trains', { state: { source: station.city } });
+  };
+
+  const handleExploreCity = () => {
+    navigate(`/destination/${encodeURIComponent(station.city)}`);
+  };
+
   return (
     <div className="station-card card">
       <div className="station-header">
@@ -25,6 +37,15 @@ function StationCard({ station }) {
 
       <div className="station-tips">
         💡 {station.tips}
+      </div>
+
+      <div className="station-actions" style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+        <button className="btn btn-primary btn-sm" onClick={handleSearchTrains}>
+          🔍 Search Trains
+        </button>
+        <button className="btn btn-outline btn-sm" onClick={handleExploreCity}>
+          🗺️ Explore City
+        </button>
       </div>
     </div>
   );
