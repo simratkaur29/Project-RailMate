@@ -110,7 +110,18 @@ function MyTrips() {
             <div className="saved-attractions-list">
               {savedAttractions.map((attraction) => (
                 <div key={`${attraction.id}-${attraction.destination}`} className="saved-attraction-item card">
-                  <span className="sa-icon">
+                  <img
+                    src={attraction.image || `/images/attractions/${attraction.id}.jpg`}
+                    alt={attraction.name}
+                    className="sa-thumb"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const fallback = e.currentTarget.parentElement.querySelector('.sa-icon');
+                      if (fallback) fallback.style.display = 'flex';
+                    }}
+                  />
+                  <span className="sa-icon" style={{ display: 'none' }}>
                     {categoryIcons[attraction.category] || '📍'}
                   </span>
                   <div className="sa-info">

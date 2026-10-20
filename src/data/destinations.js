@@ -16,6 +16,7 @@ const destinations = [
       {
         id: "ndl-1",
         name: "Red Fort",
+        image: "/images/attractions/ndl-1.jpg",
         description:
           "A UNESCO World Heritage Site and iconic Mughal-era fortress built by Emperor Shah Jahan in the 17th century.",
         category: "History and Heritage",
@@ -23,6 +24,7 @@ const destinations = [
       {
         id: "ndl-2",
         name: "Qutub Minar",
+        image: "/images/attractions/ndl-2.jpg",
         description:
           "A 73-meter tall minaret and one of the earliest examples of Indo-Islamic architecture in India.",
         category: "History and Heritage",
@@ -30,6 +32,7 @@ const destinations = [
       {
         id: "ndl-3",
         name: "India Gate",
+        image: "/images/attractions/ndl-3.jpg",
         description:
           "A war memorial and landmark on Rajpath, surrounded by lush green lawns — ideal for an evening walk.",
         category: "History and Heritage",
@@ -37,6 +40,7 @@ const destinations = [
       {
         id: "ndl-4",
         name: "Lotus Temple",
+        image: "/images/attractions/ndl-4.jpg",
         description:
           "A stunning Bahá'í House of Worship shaped like a lotus flower, known for its remarkable architecture and peaceful ambiance.",
         category: "History and Heritage",
@@ -44,6 +48,7 @@ const destinations = [
       {
         id: "ndl-5",
         name: "Lodhi Garden",
+        image: "/images/attractions/ndl-5.jpg",
         description:
           "A beautiful city park spread over 90 acres, featuring 15th-century tombs and monuments amidst manicured greenery.",
         category: "Nature",
@@ -51,6 +56,7 @@ const destinations = [
       {
         id: "ndl-6",
         name: "Garden of Five Senses",
+        image: "/images/attractions/ndl-6.jpg",
         description:
           "A landscaped park with artistic installations, rock formations, and themed gardens for a relaxed visit.",
         category: "Nature",
@@ -58,6 +64,7 @@ const destinations = [
       {
         id: "ndl-7",
         name: "Chandni Chowk",
+        image: "/images/attractions/ndl-7.jpg",
         description:
           "One of the oldest and busiest markets in India, famous for street food, textiles, and local goods.",
         category: "Shopping",
@@ -65,6 +72,7 @@ const destinations = [
       {
         id: "ndl-8",
         name: "Connaught Place",
+        image: "/images/attractions/ndl-8.jpg",
         description:
           "A major commercial and financial hub with a circular market, restaurants, shops, and entertainment options.",
         category: "Shopping",
@@ -72,6 +80,7 @@ const destinations = [
       {
         id: "ndl-9",
         name: "National Rail Museum",
+        image: "/images/attractions/ndl-9.jpg",
         description:
           "A museum dedicated to the history of Indian Railways, with vintage locomotives and interactive exhibits — great for families.",
         category: "Family-Friendly",
@@ -79,6 +88,7 @@ const destinations = [
       {
         id: "ndl-10",
         name: "National Zoological Park",
+        image: "/images/attractions/ndl-10.jpg",
         description:
           "Home to a wide variety of animals and birds, this zoo near Old Fort is a popular family outing spot.",
         category: "Family-Friendly",
@@ -162,6 +172,7 @@ const destinations = [
       {
         id: "chd-1",
         name: "Rock Garden",
+        image: "/images/attractions/chd-1.jpg",
         description:
           "A unique sculpture garden built by Nek Chand using recycled industrial and household waste. A must-visit attraction.",
         category: "History and Heritage",
@@ -169,6 +180,7 @@ const destinations = [
       {
         id: "chd-2",
         name: "Capitol Complex",
+        image: "/images/attractions/chd-2.jpg",
         description:
           "A UNESCO World Heritage Site designed by Le Corbusier, featuring the High Court, Secretariat, and Open Hand Monument.",
         category: "History and Heritage",
@@ -176,6 +188,7 @@ const destinations = [
       {
         id: "chd-3",
         name: "Sukhna Lake",
+        image: "/images/attractions/chd-3.jpg",
         description:
           "A beautiful man-made lake at the foothills of the Shivalik range, popular for boating, jogging, and evening walks.",
         category: "Nature",
@@ -183,6 +196,7 @@ const destinations = [
       {
         id: "chd-4",
         name: "Rose Garden (Zakir Hussain Rose Garden)",
+        image: "/images/attractions/chd-4.jpg",
         description:
           "Asia's largest rose garden with over 1,600 varieties of roses spread across 30 acres.",
         category: "Nature",
@@ -190,6 +204,7 @@ const destinations = [
       {
         id: "chd-5",
         name: "Elante Mall",
+        image: "/images/attractions/chd-5.jpg",
         description:
           "One of the largest malls in northern India, featuring international brands, a food court, and entertainment.",
         category: "Shopping",
@@ -197,6 +212,7 @@ const destinations = [
       {
         id: "chd-6",
         name: "Sector 17 Market",
+        image: "/images/attractions/chd-6.jpg",
         description:
           "The main commercial centre of Chandigarh with a pedestrian plaza, shops, restaurants, and cinemas.",
         category: "Shopping",
@@ -204,6 +220,7 @@ const destinations = [
       {
         id: "chd-7",
         name: "International Dolls Museum",
+        image: "/images/attractions/chd-7.jpg",
         description:
           "A fascinating collection of dolls from over 25 countries, making it a delightful outing for families with children.",
         category: "Family-Friendly",
@@ -211,6 +228,7 @@ const destinations = [
       {
         id: "chd-8",
         name: "Chandigarh Bird Park",
+        image: "/images/attractions/chd-8.jpg",
         description:
           "Home to various bird species in walk-through aviaries, located near Sukhna Lake.",
         category: "Nature",
@@ -288,6 +306,7 @@ const destinations = [
       {
         id: "jpr-1",
         name: "Amber Fort",
+        image: "/images/attractions/jpr-1.jpg",
         description:
           "A magnificent hilltop fort with artistic Hindu-style elements, breathtaking views, and a rich history.",
         category: "History and Heritage",
@@ -295,6 +314,7 @@ const destinations = [
       {
         id: "jpr-2",
         name: "Hawa Mahal (Palace of Winds)",
+        image: "/images/attractions/jpr-2.jpg",
         description:
           "An iconic pink sandstone palace with 953 small windows, designed to allow royal women to observe street life.",
         category: "History and Heritage",
@@ -302,6 +322,7 @@ const destinations = [
       {
         id: "jpr-3",
         name: "City Palace",
+        image: "/images/attractions/jpr-3.jpg",
         description:
           "A splendid complex of courtyards, gardens, and buildings that blend Rajasthani and Mughal architecture.",
         category: "History and Heritage",
@@ -309,6 +330,7 @@ const destinations = [
       {
         id: "jpr-4",
         name: "Jantar Mantar",
+        image: "/images/attractions/jpr-4.jpg",
         description:
           "A UNESCO World Heritage Site featuring the world's largest stone sundial and astronomical instruments.",
         category: "History and Heritage",
@@ -316,6 +338,7 @@ const destinations = [
       {
         id: "jpr-5",
         name: "Nahargarh Fort",
+        image: "/images/attractions/jpr-5.jpg",
         description:
           "Perched on the Aravalli hills, this fort offers panoramic views of Jaipur — especially stunning at sunset.",
         category: "Nature",
@@ -323,6 +346,7 @@ const destinations = [
       {
         id: "jpr-6",
         name: "Jal Mahal",
+        image: "/images/attractions/jpr-6.jpg",
         description:
           "A palace set in the middle of Man Sagar Lake, creating a picturesque view against the Aravalli hills.",
         category: "Nature",
@@ -330,6 +354,7 @@ const destinations = [
       {
         id: "jpr-7",
         name: "Johari Bazaar",
+        image: "/images/attractions/jpr-7.jpg",
         description:
           "Famous for Rajasthani jewellery, gemstones, and traditional textiles — a paradise for shoppers.",
         category: "Shopping",
@@ -337,6 +362,7 @@ const destinations = [
       {
         id: "jpr-8",
         name: "Bapu Bazaar",
+        image: "/images/attractions/jpr-8.jpg",
         description:
           "A bustling market known for textiles, leather goods, and traditional Rajasthani handicrafts.",
         category: "Shopping",
@@ -344,6 +370,7 @@ const destinations = [
       {
         id: "jpr-9",
         name: "Birla Mandir",
+        image: "/images/attractions/jpr-9.jpg",
         description:
           "A beautiful white marble temple situated at the base of Moti Dungari hill, peaceful and family-friendly.",
         category: "Family-Friendly",
@@ -351,6 +378,7 @@ const destinations = [
       {
         id: "jpr-10",
         name: "Elefantastic Elephant Sanctuary",
+        image: "/images/attractions/jpr-10.jpg",
         description:
           "An ethical elephant sanctuary where visitors can learn about elephant care — a unique experience for families.",
         category: "Family-Friendly",
@@ -428,6 +456,7 @@ const destinations = [
       {
         id: "asr-1",
         name: "Golden Temple (Sri Harmandir Sahib)",
+        image: "/images/attractions/asr-1.jpg",
         description:
           "The holiest shrine of Sikhism, featuring a gold-plated sanctum surrounded by a sacred pool. Open to all visitors.",
         category: "History and Heritage",
@@ -435,6 +464,7 @@ const destinations = [
       {
         id: "asr-2",
         name: "Jallianwala Bagh",
+        image: "/images/attractions/asr-2.jpg",
         description:
           "A historic memorial garden commemorating the 1919 massacre — a significant site in India's independence movement.",
         category: "History and Heritage",
@@ -442,6 +472,7 @@ const destinations = [
       {
         id: "asr-3",
         name: "Wagah Border",
+        image: "/images/attractions/asr-3.jpg",
         description:
           "The India-Pakistan border crossing known for its daily flag-lowering ceremony attended by enthusiastic crowds.",
         category: "History and Heritage",
@@ -449,6 +480,7 @@ const destinations = [
       {
         id: "asr-4",
         name: "Partition Museum",
+        image: "/images/attractions/asr-4.jpg",
         description:
           "India's first museum dedicated to the Partition of 1947, housed in the historic Town Hall.",
         category: "History and Heritage",
@@ -456,6 +488,7 @@ const destinations = [
       {
         id: "asr-5",
         name: "Ram Bagh Garden",
+        image: "/images/attractions/asr-5.jpg",
         description:
           "A historic Mughal-style garden that served as the summer palace of Maharaja Ranjit Singh.",
         category: "Nature",
@@ -463,6 +496,7 @@ const destinations = [
       {
         id: "asr-6",
         name: "Hall Bazaar",
+        image: "/images/attractions/asr-6.jpg",
         description:
           "A bustling market near the Golden Temple selling traditional Punjabi clothing, jutis, and souvenirs.",
         category: "Shopping",
@@ -470,6 +504,7 @@ const destinations = [
       {
         id: "asr-7",
         name: "Katra Jaimal Singh Market",
+        image: "/images/attractions/asr-7.jpg",
         description:
           "A traditional market known for Phulkari embroidery, textiles, and Punjabi accessories.",
         category: "Shopping",
@@ -477,6 +512,7 @@ const destinations = [
       {
         id: "asr-8",
         name: "Maharaja Ranjit Singh Museum",
+        image: "/images/attractions/asr-8.jpg",
         description:
           "A museum showcasing Sikh artefacts, weapons, paintings, and manuscripts — enriching for families.",
         category: "Family-Friendly",
@@ -554,6 +590,7 @@ const destinations = [
       {
         id: "mum-1",
         name: "Gateway of India",
+        image: "/images/attractions/mum-1.jpg",
         description:
           "An iconic arch monument overlooking the Arabian Sea, built to commemorate King George V's visit in 1911.",
         category: "History and Heritage",
@@ -561,6 +598,7 @@ const destinations = [
       {
         id: "mum-2",
         name: "Chhatrapati Shivaji Maharaj Terminus",
+        image: "/images/attractions/mum-2.jpg",
         description:
           "A UNESCO World Heritage Site and a stunning example of Victorian Gothic Revival architecture.",
         category: "History and Heritage",
@@ -568,6 +606,7 @@ const destinations = [
       {
         id: "mum-3",
         name: "Marine Drive",
+        image: "/images/attractions/mum-3.jpg",
         description:
           "A 3.6 km arc-shaped promenade along the coast, known as the Queen's Necklace when lit up at night.",
         category: "Nature",
@@ -575,6 +614,7 @@ const destinations = [
       {
         id: "mum-4",
         name: "Elephanta Caves",
+        image: "/images/attractions/mum-4.jpg",
         description:
           "Ancient rock-cut cave temples on an island in Mumbai Harbour, accessible by ferry from the Gateway.",
         category: "History and Heritage",
@@ -582,6 +622,7 @@ const destinations = [
       {
         id: "mum-5",
         name: "Colaba Causeway",
+        image: "/images/attractions/mum-5.jpg",
         description:
           "A vibrant street market in South Mumbai offering fashion, antiques, accessories, and street food.",
         category: "Shopping",
@@ -589,6 +630,7 @@ const destinations = [
       {
         id: "mum-6",
         name: "Crawford Market",
+        image: "/images/attractions/mum-6.jpg",
         description:
           "A bustling wholesale market known for fresh produce, imported goods, and pet animals.",
         category: "Shopping",
@@ -596,6 +638,7 @@ const destinations = [
       {
         id: "mum-7",
         name: "Sanjay Gandhi National Park",
+        image: "/images/attractions/mum-7.jpg",
         description:
           "A large protected area within Mumbai, featuring hiking trails, Kanheri Caves, and a lion safari.",
         category: "Nature",
@@ -603,6 +646,7 @@ const destinations = [
       {
         id: "mum-8",
         name: "EsselWorld & Water Kingdom",
+        image: "/images/attractions/mum-8.jpg",
         description:
           "Mumbai's popular amusement and water park, great for a fun family day out.",
         category: "Family-Friendly",
@@ -680,6 +724,7 @@ const destinations = [
       {
         id: "vrn-1",
         name: "Dashashwamedh Ghat",
+        image: "/images/attractions/vrn-1.jpg",
         description:
           "The main ghat on the Ganges, famous for its spectacular Ganga Aarti ceremony held every evening.",
         category: "History and Heritage",
@@ -687,6 +732,7 @@ const destinations = [
       {
         id: "vrn-2",
         name: "Kashi Vishwanath Temple",
+        image: "/images/attractions/vrn-2.jpg",
         description:
           "One of the most famous Hindu temples dedicated to Lord Shiva, located in the heart of the old city.",
         category: "History and Heritage",
@@ -694,6 +740,7 @@ const destinations = [
       {
         id: "vrn-3",
         name: "Sarnath",
+        image: "/images/attractions/vrn-3.jpg",
         description:
           "The site where Buddha gave his first sermon. Features ancient stupas, a museum, and the Ashoka Pillar.",
         category: "History and Heritage",
@@ -701,6 +748,7 @@ const destinations = [
       {
         id: "vrn-4",
         name: "Assi Ghat",
+        image: "/images/attractions/vrn-4.jpg",
         description:
           "A serene ghat popular among travelers, known for morning yoga sessions, chai stalls, and cultural events.",
         category: "Nature",
@@ -708,6 +756,7 @@ const destinations = [
       {
         id: "vrn-5",
         name: "Boat Ride on the Ganges",
+        image: "/images/attractions/vrn-5.jpg",
         description:
           "A sunrise boat ride along the ghats offers an unforgettable view of rituals, temples, and daily life.",
         category: "Nature",
@@ -715,6 +764,7 @@ const destinations = [
       {
         id: "vrn-6",
         name: "Vishwanath Gali",
+        image: "/images/attractions/vrn-6.jpg",
         description:
           "A narrow lane near the temple filled with silk shops, brassware, wooden toys, and street food stalls.",
         category: "Shopping",
@@ -722,6 +772,7 @@ const destinations = [
       {
         id: "vrn-7",
         name: "Banaras Hindu University (BHU)",
+        image: "/images/attractions/vrn-7.jpg",
         description:
           "One of Asia's largest residential universities with a beautiful campus and the Bharat Kala Bhavan museum.",
         category: "Family-Friendly",
@@ -729,6 +780,7 @@ const destinations = [
       {
         id: "vrn-8",
         name: "Ramnagar Fort",
+        image: "/images/attractions/vrn-8.jpg",
         description:
           "An 18th-century fort on the eastern bank of the Ganges, housing a museum of vintage cars and royal artefacts.",
         category: "History and Heritage",
@@ -806,6 +858,7 @@ const destinations = [
       {
         id: "ptn-1",
         name: "Golghar",
+        image: "/images/attractions/ptn-1.jpg",
         description:
           "A massive granary built in 1786 with a unique beehive shape. Climb the spiral staircase for panoramic views of Patna.",
         category: "History and Heritage",
@@ -813,6 +866,7 @@ const destinations = [
       {
         id: "ptn-2",
         name: "Patna Museum",
+        image: "/images/attractions/ptn-2.jpg",
         description:
           "Houses a rich collection of Hindu and Buddhist sculptures, paintings, and a fossilised tree trunk.",
         category: "History and Heritage",
@@ -820,6 +874,7 @@ const destinations = [
       {
         id: "ptn-3",
         name: "Takht Sri Patna Sahib",
+        image: "/images/attractions/ptn-3.jpg",
         description:
           "One of five sacred Takhts (thrones) in Sikhism, marking the birthplace of Guru Gobind Singh.",
         category: "History and Heritage",
@@ -827,6 +882,7 @@ const destinations = [
       {
         id: "ptn-4",
         name: "Eco Park",
+        image: "/images/attractions/ptn-4.jpg",
         description:
           "A well-maintained park on the banks of the Ganges, featuring boating, gardens, and amusement rides.",
         category: "Family-Friendly",
@@ -834,6 +890,7 @@ const destinations = [
       {
         id: "ptn-5",
         name: "Gandhi Maidan",
+        image: "/images/attractions/ptn-5.jpg",
         description:
           "A large open ground in the heart of Patna, used for public events and bordered by parks.",
         category: "Nature",
@@ -841,6 +898,7 @@ const destinations = [
       {
         id: "ptn-6",
         name: "Kumhrar Archaeological Site",
+        image: "/images/attractions/ptn-6.jpg",
         description:
           "Excavated ruins of the ancient Pataliputra capital, including remnants of the Mauryan assembly hall.",
         category: "History and Heritage",
@@ -912,6 +970,7 @@ const destinations = [
       {
         id: "kol-1",
         name: "Victoria Memorial",
+        image: "/images/attractions/kol-1.jpg",
         description:
           "A majestic white marble monument and museum set in lush gardens — one of Kolkata's most iconic landmarks.",
         category: "History and Heritage",
@@ -919,6 +978,7 @@ const destinations = [
       {
         id: "kol-2",
         name: "Howrah Bridge",
+        image: "/images/attractions/kol-2.jpg",
         description:
           "An engineering marvel and cantilever bridge over the Hooghly River, connecting Howrah to Kolkata.",
         category: "History and Heritage",
@@ -926,6 +986,7 @@ const destinations = [
       {
         id: "kol-3",
         name: "Indian Museum",
+        image: "/images/attractions/kol-3.jpg",
         description:
           "The oldest and largest museum in India, housing rare antiques, armour, fossils, and Mughal paintings.",
         category: "History and Heritage",
@@ -933,6 +994,7 @@ const destinations = [
       {
         id: "kol-4",
         name: "Princep Ghat",
+        image: "/images/attractions/kol-4.jpg",
         description:
           "A riverside promenade on the Hooghly with Palladian columns — beautiful during sunset.",
         category: "Nature",
@@ -940,6 +1002,7 @@ const destinations = [
       {
         id: "kol-5",
         name: "New Market",
+        image: "/images/attractions/kol-5.jpg",
         description:
           "One of the oldest markets in Kolkata with a vast variety of goods — from clothing to electronics.",
         category: "Shopping",
@@ -947,6 +1010,7 @@ const destinations = [
       {
         id: "kol-6",
         name: "College Street (Boi Para)",
+        image: "/images/attractions/kol-6.jpg",
         description:
           "The largest second-hand book market in the world — a paradise for bibliophiles.",
         category: "Shopping",
@@ -954,6 +1018,7 @@ const destinations = [
       {
         id: "kol-7",
         name: "Eco Tourism Park (New Town)",
+        image: "/images/attractions/kol-7.jpg",
         description:
           "A large urban park featuring themed gardens, a butterfly garden, and boating facilities for families.",
         category: "Family-Friendly",
@@ -961,6 +1026,7 @@ const destinations = [
       {
         id: "kol-8",
         name: "Marble Palace",
+        image: "/images/attractions/kol-8.jpg",
         description:
           "A grand 19th-century mansion with European sculptures, paintings, and a small zoo — unique and underrated.",
         category: "History and Heritage",
