@@ -31,23 +31,31 @@ function Home() {
           <p>Search trains, explore stations, get travel tips, and plan your perfect railway journey with RAILMATE.</p>
 
           <div className="search-form-container">
+            <datalist id="home-stations-list">
+              {['New Delhi', 'Mumbai', 'Punjab', 'Amritsar', 'Chandigarh', 'Agra', 'Goa', 'Jaipur', 'Varanasi', 'Kolkata', 'Bangalore', 'Chennai', 'Hyderabad', 'Pune', 'Kashmir', 'Shimla', 'Kochi', 'Udaipur', 'Ahmedabad', 'Patna'].map((st) => (
+                <option key={st} value={st} />
+              ))}
+            </datalist>
+
             <form className="search-form" onSubmit={handleSearch}>
               <div className="form-group">
-                <label htmlFor="hero-source">From Station</label>
+                <label htmlFor="hero-source">From Station / City</label>
                 <input
                   id="hero-source"
                   type="text"
-                  placeholder="e.g. New Delhi"
+                  list="home-stations-list"
+                  placeholder="e.g. Mumbai"
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="hero-dest">To Station</label>
+                <label htmlFor="hero-dest">To Station / State</label>
                 <input
                   id="hero-dest"
                   type="text"
-                  placeholder="e.g. Mumbai"
+                  list="home-stations-list"
+                  placeholder="e.g. Punjab"
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
                 />
