@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { JourneyProvider } from './context/JourneyContext';
-import { FoodCartProvider } from './context/FoodCartContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -17,11 +16,6 @@ import Community from './pages/Community';
 import RailwayTips from './pages/RailwayTips';
 import DestinationGuide from './pages/DestinationGuide';
 import MyTrips from './pages/MyTrips';
-import StationBites from './pages/StationBites';
-import RestaurantMenu from './pages/RestaurantMenu';
-import FoodCart from './pages/FoodCart';
-import FoodCheckout from './pages/FoodCheckout';
-import MyOrders from './pages/MyOrders';
 import LoginPromptModal from './components/LoginPromptModal';
 import './styles/global.css';
 import './styles/profile.css';
@@ -51,37 +45,30 @@ function App() {
   return (
     <Router>
       <JourneyProvider>
-        <FoodCartProvider>
-          <div className="app">
-            <Navbar user={user} onLogout={handleLogout} />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/trains" element={<Trains />} />
-              <Route path="/login" element={<Login onLogin={handleLogin} />} />
-              <Route path="/register" element={<Register onLogin={handleLogin} />} />
-              <Route path="/profile" element={<Profile user={user} onLogin={handleLogin} onLogout={handleLogout} />} />
-              <Route path="/booking" element={<Booking user={user} />} />
-              <Route path="/my-bookings" element={<MyBookings user={user} />} />
-              <Route path="/stations" element={<StationGuide />} />
-              <Route path="/assistant" element={<SmartAssistant />} />
-              <Route path="/community" element={<Community user={user} />} />
-              <Route path="/tips" element={<RailwayTips />} />
-              <Route path="/destination/:destinationName" element={<DestinationGuide />} />
-              <Route path="/my-trips" element={<MyTrips />} />
-              {/* Station Bites — Food Discovery */}
-              <Route path="/station-bites" element={<StationBites />} />
-              <Route path="/station-bites/restaurant/:restaurantId" element={<RestaurantMenu />} />
-              <Route path="/station-bites/cart" element={<FoodCart />} />
-              <Route path="/station-bites/checkout" element={<FoodCheckout />} />
-              <Route path="/station-bites/orders" element={<MyOrders />} />
-            </Routes>
-            <Footer />
-            <LoginPromptModal user={user} />
-          </div>
-        </FoodCartProvider>
+        <div className="app">
+          <Navbar user={user} onLogout={handleLogout} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/trains" element={<Trains />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/register" element={<Register onLogin={handleLogin} />} />
+            <Route path="/profile" element={<Profile user={user} onLogin={handleLogin} onLogout={handleLogout} />} />
+            <Route path="/booking" element={<Booking user={user} />} />
+            <Route path="/my-bookings" element={<MyBookings user={user} />} />
+            <Route path="/stations" element={<StationGuide />} />
+            <Route path="/assistant" element={<SmartAssistant />} />
+            <Route path="/community" element={<Community user={user} />} />
+            <Route path="/tips" element={<RailwayTips />} />
+            <Route path="/destination/:destinationName" element={<DestinationGuide />} />
+            <Route path="/my-trips" element={<MyTrips />} />
+          </Routes>
+          <Footer />
+          <LoginPromptModal user={user} />
+        </div>
       </JourneyProvider>
     </Router>
   );
 }
 
 export default App;
+
