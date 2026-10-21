@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/userSlice';
 import '../styles/profile.css';
 
-function MyBookings({ user }) {
+function MyBookings() {
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {

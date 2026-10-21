@@ -1,10 +1,13 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../store/userSlice';
 import FormInput from '../components/FormInput';
 import '../styles/profile.css';
 
-function Register({ onLogin }) {
+function Register() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -56,7 +59,7 @@ function Register({ onLogin }) {
       password: form.password,
     };
     localStorage.setItem('railmate_user', JSON.stringify(user));
-    onLogin(user);
+    dispatch(login(user));
     navigate('/profile');
   };
 

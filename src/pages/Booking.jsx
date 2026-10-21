@@ -1,11 +1,14 @@
 import { useState, useRef } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/userSlice';
 import FormInput from '../components/FormInput';
 import '../styles/profile.css';
 
-function Booking({ user }) {
+function Booking() {
   const location = useLocation();
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
   const train = location.state?.train;
 
   const [form, setForm] = useState({

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/userSlice';
 import ReviewCard from '../components/ReviewCard';
 import AnnouncementCard from '../components/AnnouncementCard';
 import FormInput from '../components/FormInput';
@@ -21,7 +23,8 @@ const railwayTips = [
   { id: 5, tip: 'Use only authorized IRCTC food services for hygienic meals during your journey.' },
 ];
 
-function Community({ user }) {
+function Community() {
+  const user = useSelector(selectUser);
   const [activeTab, setActiveTab] = useState('announcements');
   const [reviews, setReviews] = useState(reviewsData);
   const [newReview, setNewReview] = useState({ train: '', rating: 5, text: '' });

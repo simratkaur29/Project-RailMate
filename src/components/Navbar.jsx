@@ -1,14 +1,18 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectUser, logout } from '../store/userSlice';
 import '../styles/navbar.css';
 
-function Navbar({ user, onLogout }) {
+function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
 
 
   const handleLogout = () => {
-    onLogout();
+    dispatch(logout());
     setMenuOpen(false);
     navigate('/');
   };

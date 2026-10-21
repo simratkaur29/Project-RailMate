@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { JourneyProvider } from './context/JourneyContext';
 import Navbar from './components/Navbar';
@@ -21,49 +20,28 @@ import './styles/global.css';
 import './styles/profile.css';
 
 function App() {
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('railmate_user');
-    const loggedIn = localStorage.getItem('railmate_logged_in');
-    if (saved && loggedIn === 'true') {
-      return JSON.parse(saved);
-    }
-    return null;
-  });
-
-  const handleLogin = (userData) => {
-    setUser(userData);
-    localStorage.setItem('railmate_user', JSON.stringify(userData));
-    localStorage.setItem('railmate_logged_in', 'true');
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.setItem('railmate_logged_in', 'false');
-  };
-
-
   return (
     <Router>
       <JourneyProvider>
         <div className="app">
-          <Navbar user={user} onLogout={handleLogout} />
+          <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/trains" element={<Trains />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/register" element={<Register onLogin={handleLogin} />} />
-            <Route path="/profile" element={<Profile user={user} onLogin={handleLogin} onLogout={handleLogout} />} />
-            <Route path="/booking" element={<Booking user={user} />} />
-            <Route path="/my-bookings" element={<MyBookings user={user} />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/booking" element={<Booking />} />
+            <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/stations" element={<StationGuide />} />
             <Route path="/assistant" element={<SmartAssistant />} />
-            <Route path="/community" element={<Community user={user} />} />
+            <Route path="/community" element={<Community />} />
             <Route path="/tips" element={<RailwayTips />} />
             <Route path="/destination/:destinationName" element={<DestinationGuide />} />
             <Route path="/my-trips" element={<MyTrips />} />
           </Routes>
           <Footer />
-          <LoginPromptModal user={user} />
+          <LoginPromptModal />
         </div>
       </JourneyProvider>
     </Router>
@@ -71,4 +49,3 @@ function App() {
 }
 
 export default App;
-

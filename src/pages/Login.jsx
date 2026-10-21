@@ -1,11 +1,14 @@
 // Login Page - Member 3 (Palak)
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../store/userSlice';
 import FormInput from '../components/FormInput';
 import '../styles/profile.css';
 
-function Login({ onLogin }) {
+function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [form, setForm] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
 
@@ -42,7 +45,7 @@ function Login({ onLogin }) {
     if (storedUser) {
       const user = JSON.parse(storedUser);
       if (user.email === form.email && user.password === form.password) {
-        onLogin(user);
+        dispatch(login(user));
         navigate('/profile');
         return;
       }
@@ -56,7 +59,7 @@ function Login({ onLogin }) {
       password: form.password,
     };
     localStorage.setItem('railmate_user', JSON.stringify(demoUser));
-    onLogin(demoUser);
+    dispatch(login(demoUser));
     navigate('/profile');
   };
 

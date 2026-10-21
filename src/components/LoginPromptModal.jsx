@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/userSlice';
 import '../styles/loginprompt.css';
 
 /**
@@ -11,10 +13,11 @@ import '../styles/loginprompt.css';
  * - Closes on backdrop click, Escape key, or explicit buttons.
  * - Prevents background scrolling while open.
  */
-function LoginPromptModal({ user }) {
+function LoginPromptModal() {
   const [visible, setVisible] = useState(false);
   const [animatingOut, setAnimatingOut] = useState(false);
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
   const timerRef = useRef(null);
   const modalRef = useRef(null);
 
