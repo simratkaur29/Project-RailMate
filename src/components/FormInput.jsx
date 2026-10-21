@@ -16,6 +16,7 @@ const FormInput = forwardRef(function FormInput(
     required = false,
     options = null, // array of { value, label } for select inputs
     min,
+    rows = 3,
     disabled = false,
   },
   ref
@@ -49,6 +50,19 @@ const FormInput = forwardRef(function FormInput(
             </option>
           ))}
         </select>
+      ) : type === 'textarea' ? (
+        <textarea
+          ref={ref}
+          id={inputId}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          rows={rows}
+          disabled={disabled}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${inputId}-error` : undefined}
+          style={error ? { borderColor: 'var(--error, #e53e3e)' } : {}}
+        />
       ) : (
         <input
           ref={ref}
