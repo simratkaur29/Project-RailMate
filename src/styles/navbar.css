@@ -90,23 +90,6 @@
   padding: 4px;
 }
 
-/* Nav cart badge */
-.nav-cart-badge {
-  background: var(--accent);
-  color: var(--primary);
-  font-size: 0.65rem;
-  font-weight: 700;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-  margin-left: 4px;
-  vertical-align: top;
-}
-
 /* Large screens - slightly reduce padding */
 @media (max-width: 1280px) {
   .navbar-links a {
@@ -120,6 +103,7 @@
   }
 }
 
+/* Tablets - switch to hamburger menu */
 @media (max-width: 900px) {
   .mobile-toggle {
     display: block;

@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, login, logout } from '../store/userSlice';
-import FormInput from '../components/FormInput';
 import '../styles/profile.css';
 
-function Profile() {
+function Profile({ user, onLogin, onLogout }) {
   const navigate = useNavigate();
-  const user = useSelector(selectUser);
-  const dispatch = useDispatch();
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({ name: '', email: '', phone: '' });
   const [changingPassword, setChangingPassword] = useState(false);
@@ -43,7 +38,7 @@ function Profile() {
   const handleEditSave = () => {
     const updatedUser = { ...user, ...editForm };
     localStorage.setItem('railmate_user', JSON.stringify(updatedUser));
-    dispatch(login(updatedUser));
+    onLogin(updatedUser);
     setEditing(false);
   };
 
@@ -62,7 +57,7 @@ function Profile() {
     }
     const updatedUser = { ...user, password: passwordForm.newPass };
     localStorage.setItem('railmate_user', JSON.stringify(updatedUser));
-    dispatch(login(updatedUser));
+    onLogin(updatedUser);
     setPasswordForm({ current: '', newPass: '', confirm: '' });
     setPasswordMsg('Password changed successfully!');
     setTimeout(() => { setPasswordMsg(''); setChangingPassword(false); }, 2000);
@@ -94,7 +89,7 @@ function Profile() {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
+    onLogout();
     navigate('/');
   };
 
@@ -118,27 +113,18 @@ function Profile() {
 
           {editing ? (
             <div>
-              <FormInput
-                id="edit-name"
-                label="Full Name"
-                type="text"
-                value={editForm.name}
-                onChange={(val) => setEditForm({ ...editForm, name: val })}
-              />
-              <FormInput
-                id="edit-email"
-                label="Email"
-                type="email"
-                value={editForm.email}
-                onChange={(val) => setEditForm({ ...editForm, email: val })}
-              />
-              <FormInput
-                id="edit-phone"
-                label="Phone"
-                type="tel"
-                value={editForm.phone}
-                onChange={(val) => setEditForm({ ...editForm, phone: val })}
-              />
+              <div className="form-group">
+                <label htmlFor="edit-name">Full Name</label>
+                <input id="edit-name" type="text" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-email">Email</label>
+                <input id="edit-email" type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-phone">Phone</label>
+                <input id="edit-phone" type="tel" value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} />
+              </div>
               <div className="profile-actions">
                 <button className="btn btn-primary" onClick={handleEditSave}>Save Changes</button>
                 <button className="btn btn-outline" onClick={() => setEditing(false)}>Cancel</button>
@@ -178,27 +164,18 @@ function Profile() {
                 {passwordMsg}
               </p>
             )}
-            <FormInput
-              id="current-pass"
-              label="Current Password"
-              type="password"
-              value={passwordForm.current}
-              onChange={(val) => setPasswordForm({ ...passwordForm, current: val })}
-            />
-            <FormInput
-              id="new-pass"
-              label="New Password"
-              type="password"
-              value={passwordForm.newPass}
-              onChange={(val) => setPasswordForm({ ...passwordForm, newPass: val })}
-            />
-            <FormInput
-              id="confirm-pass"
-              label="Confirm New Password"
-              type="password"
-              value={passwordForm.confirm}
-              onChange={(val) => setPasswordForm({ ...passwordForm, confirm: val })}
-            />
+            <div className="form-group">
+              <label htmlFor="current-pass">Current Password</label>
+              <input id="current-pass" type="password" value={passwordForm.current} onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="new-pass">New Password</label>
+              <input id="new-pass" type="password" value={passwordForm.newPass} onChange={(e) => setPasswordForm({ ...passwordForm, newPass: e.target.value })} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="confirm-pass">Confirm New Password</label>
+              <input id="confirm-pass" type="password" value={passwordForm.confirm} onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })} />
+            </div>
             <button className="btn btn-primary" onClick={handlePasswordChange}>Update Password</button>
           </div>
         )}
@@ -214,62 +191,45 @@ function Profile() {
 
           {showPassengerForm && (
             <div style={{ background: 'var(--background)', padding: '1.25rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem' }}>
-              <FormInput
-                id="pass-name"
-                label="Passenger Name"
-                type="text"
-                placeholder="Full name"
-                value={passengerForm.name}
-                onChange={(val) => setPassengerForm({ ...passengerForm, name: val })}
-              />
+              <div className="form-group">
+                <label htmlFor="pass-name">Passenger Name</label>
+                <input id="pass-name" type="text" placeholder="Full name" value={passengerForm.name} onChange={(e) => setPassengerForm({ ...passengerForm, name: e.target.value })} />
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <FormInput
-                  id="pass-age"
-                  label="Age"
-                  type="number"
-                  placeholder="Age"
-                  value={passengerForm.age}
-                  onChange={(val) => setPassengerForm({ ...passengerForm, age: val })}
-                />
-                <FormInput
-                  id="pass-gender"
-                  label="Gender"
-                  value={passengerForm.gender}
-                  onChange={(val) => setPassengerForm({ ...passengerForm, gender: val })}
-                  options={[
-                    { value: 'Male', label: 'Male' },
-                    { value: 'Female', label: 'Female' },
-                    { value: 'Other', label: 'Other' },
-                  ]}
-                />
-                <FormInput
-                  id="pass-seat"
-                  label="Seat Preference"
-                  value={passengerForm.seatPreference}
-                  onChange={(val) => setPassengerForm({ ...passengerForm, seatPreference: val })}
-                  options={[
-                    { value: 'No Preference', label: 'No Preference' },
-                    { value: 'Lower Berth', label: 'Lower Berth' },
-                    { value: 'Middle Berth', label: 'Middle Berth' },
-                    { value: 'Upper Berth', label: 'Upper Berth' },
-                    { value: 'Side Lower', label: 'Side Lower' },
-                    { value: 'Side Upper', label: 'Side Upper' },
-                    { value: 'Window', label: 'Window' },
-                  ]}
-                />
-                <FormInput
-                  id="pass-id"
-                  label="ID Type"
-                  value={passengerForm.idType}
-                  onChange={(val) => setPassengerForm({ ...passengerForm, idType: val })}
-                  options={[
-                    { value: 'Aadhar Card', label: 'Aadhar Card' },
-                    { value: 'PAN Card', label: 'PAN Card' },
-                    { value: 'Passport', label: 'Passport' },
-                    { value: 'Driving License', label: 'Driving License' },
-                    { value: 'Voter ID', label: 'Voter ID' },
-                  ]}
-                />
+                <div className="form-group">
+                  <label htmlFor="pass-age">Age</label>
+                  <input id="pass-age" type="number" placeholder="Age" value={passengerForm.age} onChange={(e) => setPassengerForm({ ...passengerForm, age: e.target.value })} />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="pass-gender">Gender</label>
+                  <select id="pass-gender" value={passengerForm.gender} onChange={(e) => setPassengerForm({ ...passengerForm, gender: e.target.value })}>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="pass-seat">Seat Preference</label>
+                  <select id="pass-seat" value={passengerForm.seatPreference} onChange={(e) => setPassengerForm({ ...passengerForm, seatPreference: e.target.value })}>
+                    <option>No Preference</option>
+                    <option>Lower Berth</option>
+                    <option>Middle Berth</option>
+                    <option>Upper Berth</option>
+                    <option>Side Lower</option>
+                    <option>Side Upper</option>
+                    <option>Window</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="pass-id">ID Type</label>
+                  <select id="pass-id" value={passengerForm.idType} onChange={(e) => setPassengerForm({ ...passengerForm, idType: e.target.value })}>
+                    <option>Aadhar Card</option>
+                    <option>PAN Card</option>
+                    <option>Passport</option>
+                    <option>Driving License</option>
+                    <option>Voter ID</option>
+                  </select>
+                </div>
               </div>
               <div className="profile-actions">
                 <button className="btn btn-primary btn-sm" onClick={handleAddPassenger}>
@@ -291,7 +251,7 @@ function Profile() {
                 <div key={p.id} className="passenger-card card">
                   <div className="passenger-info">
                     <h4>{p.name}</h4>
-                    <p>age: {p.age} | {p.gender} | {p.seatPreference} | {p.idType}</p>
+                    <p>Age: {p.age} | {p.gender} | {p.seatPreference} | {p.idType}</p>
                   </div>
                   <div className="passenger-actions">
                     <button className="btn btn-outline btn-sm" onClick={() => handleEditPassenger(index)}>✏️ Edit</button>
