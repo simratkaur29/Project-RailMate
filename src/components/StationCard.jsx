@@ -1,4 +1,4 @@
-
+import { useNavigate } from 'react-router-dom';
 
 function StationCard({ station }) {
   const navigate = useNavigate();
