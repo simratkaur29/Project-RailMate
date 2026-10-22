@@ -165,18 +165,35 @@ function Trains() {
     return false;
   };
 
+ HEAD
   const performSearch = (src, dest, currentTripType = tripType) => {
+
+  const [searchNotice, setSearchNotice] = useState('');
+
+  const performSearch = (src, dest) => {
+member3-auth
     setSearchStatus('loading');
+    setSearchNotice('');
 
     const timer = setTimeout(() => {
       try {
+HEAD
         let onwardResults = trainsData;
         let returnResults = trainsData;
 
+        let results = trainsData;
+        const normSrc = normalizeQuery(src);
+        const normDest = normalizeQuery(dest);
+ member3-auth
+
         // Onward Search
         if (src.trim()) {
+ HEAD
           const normSrc = normalizeQuery(src);
           onwardResults = onwardResults.filter(
+
+          results = results.filter(
+ member3-auth
             (t) =>
               matchesTerm(t.source, normSrc) ||
               (t.name && normalizeQuery(t.name).includes(normSrc))
@@ -184,14 +201,19 @@ function Trains() {
         }
 
         if (dest.trim()) {
+ HEAD
           const normDest = normalizeQuery(dest);
           onwardResults = onwardResults.filter(
+
+          results = results.filter(
+ member3-auth
             (t) =>
               matchesTerm(t.destination, normDest) ||
               (t.name && normalizeQuery(t.name).includes(normDest))
           );
         }
 
+ HEAD
         // Return Search (source and destination inverted)
         if (currentTripType === 'roundTrip') {
           if (dest.trim()) {
@@ -228,9 +250,54 @@ function Trains() {
               travelDate: date,
               returnDate: currentTripType === 'roundTrip' ? returnDate : '',
             });
+
+        // Fallback 1: If no direct pair match, show all trains arriving at destination
+        if (results.length === 0 && dest.trim()) {
+          const destMatches = trainsData.filter(
+            (t) =>
+              matchesTerm(t.destination, normDest) ||
+              (t.name && normalizeQuery(t.name).includes(normDest))
+          );
+          if (destMatches.length > 0) {
+            results = destMatches;
+            setSearchNotice(
+              `Showing available express trains heading to ${dest.trim()}${src.trim() ? ` (travel from ${src.trim()} connects via these services)` : ''}:`
+            );
+ member3-auth
           }
-        } else {
-          setSearchStatus('empty');
+        }
+
+        // Fallback 2: If still no match and source given, show trains from source
+        if (results.length === 0 && src.trim()) {
+          const srcMatches = trainsData.filter(
+            (t) =>
+              matchesTerm(t.source, normSrc) ||
+              (t.name && normalizeQuery(t.name).includes(normSrc))
+          );
+          if (srcMatches.length > 0) {
+            results = srcMatches;
+            setSearchNotice(
+              `Showing available outbound trains departing from ${src.trim()}:`
+            );
+          }
+        }
+
+        // Fallback 3: If still no match, show all network trains
+        if (results.length === 0) {
+          results = trainsData;
+          setSearchNotice(
+            `No direct trains found between ${src.trim()} and ${dest.trim()}. Showing all available trains across our network:`
+          );
+        }
+
+        setFilteredTrains(results);
+        setSearchStatus('success');
+        if (dest.trim()) {
+          updateJourney({
+            source: src.trim(),
+            destination: dest.trim(),
+            travelDate: date,
+          });
         }
       } catch {
         setSearchStatus('error');
@@ -308,12 +375,16 @@ function Trains() {
     setSource('');
     setDestination('');
     setDate('');
+HEAD
     setReturnDate('');
     setDateError('');
     setReturnDateError('');
     setSelectedOnwardTrain(null);
     setSelectedReturnTrain(null);
     setActiveTab('onward');
+
+    setSearchNotice('');
+ member3-auth
     setFilteredTrains(trainsData);
     setReturnTrains([]);
     setSearchStatus('success');
