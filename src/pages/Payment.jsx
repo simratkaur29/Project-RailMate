@@ -144,6 +144,9 @@ function Payment({ user }) {
         departure: bookingOrder.departure,
         arrival: bookingOrder.arrival,
         duration: bookingOrder.duration,
+        journeyType: bookingOrder.journeyType || 'oneWay',
+        returnDate: bookingOrder.returnDate || null,
+        journeyMultiplier: bookingOrder.journeyMultiplier || 1,
         date: bookingOrder.date,
         passengerName: bookingOrder.passengerName,
         email: bookingOrder.email,
@@ -235,8 +238,19 @@ function Payment({ user }) {
                   <td>{confirmedBooking.source} ➔ {confirmedBooking.destination}</td>
                 </tr>
                 <tr>
+                  <th>Journey Type</th>
+                  <td>
+                    {confirmedBooking.journeyType === 'roundTrip'
+                      ? '🔄 Round Trip / Return Journey (2 legs)'
+                      : '➡️ One-Way Journey'}
+                  </td>
+                </tr>
+                <tr>
                   <th>Journey Date</th>
-                  <td>{confirmedBooking.date}</td>
+                  <td>
+                    {confirmedBooking.date}
+                    {confirmedBooking.returnDate ? ` (Return: ${confirmedBooking.returnDate})` : ''}
+                  </td>
                 </tr>
                 <tr>
                   <th>Passenger</th>
@@ -364,8 +378,17 @@ function Payment({ user }) {
                   <p>{bookingOrder.source} ➔ {bookingOrder.destination}</p>
                 </div>
                 <div className="summary-item">
-                  <label>Journey Date</label>
-                  <p>{bookingOrder.date}</p>
+                  <label>Journey Type</label>
+                  <p>{bookingOrder.journeyType === 'roundTrip' ? '🔄 Round Trip' : '➡️ One-Way'}</p>
+                </div>
+                <div className="summary-item">
+                  <label>Journey Date(s)</label>
+                  <p>
+                    {bookingOrder.date}
+                    {bookingOrder.journeyType === 'roundTrip' && bookingOrder.returnDate
+                      ? ` (Return: ${bookingOrder.returnDate})`
+                      : ''}
+                  </p>
                 </div>
                 <div className="summary-item">
                   <label>Class & Seat</label>
@@ -627,7 +650,10 @@ function Payment({ user }) {
 
               <div className="fare-row">
                 <span>Base Ticket Fare</span>
-                <span>₹{bookingOrder.trainPrice || (bookingOrder.baseFare / bookingOrder.passengers)} × {bookingOrder.passengers}</span>
+                <span>
+                  ₹{bookingOrder.trainPrice} × {bookingOrder.passengers} passenger{bookingOrder.passengers > 1 ? 's' : ''}
+                  {bookingOrder.journeyMultiplier === 2 ? ' × 2 (Round Trip)' : ''}
+                </span>
               </div>
               <div className="fare-row" style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '-4px' }}>
                 <span>Total Ticket Fare</span>
@@ -635,7 +661,13 @@ function Payment({ user }) {
               </div>
 
               <div className="fare-row" style={{ marginTop: '6px' }}>
-                <span>Catering / Food Addons</span>
+                <div>
+                  <div>Catering / Food Addons</div>
+                  <small style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                    {getMealsDisplay(bookingOrder.meals)}
+                    {bookingOrder.mealFare > 0 && bookingOrder.journeyMultiplier === 2 ? ' (for 2 legs)' : ''}
+                  </small>
+                </div>
                 <span>
                   {bookingOrder.mealFare > 0
                     ? `₹${bookingOrder.mealFare}`

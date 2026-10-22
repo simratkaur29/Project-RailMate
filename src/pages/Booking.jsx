@@ -19,7 +19,9 @@ function Booking({ user }) {
     passengerName: user?.name || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    date: '',
+    journeyType: location.state?.journeyType || 'oneWay', // 'oneWay' or 'roundTrip'
+    date: location.state?.date || '',
+    returnDate: '',
     travelClass: '',
     seatPreference: 'No Preference',
     passengers: 1,
@@ -53,12 +55,13 @@ function Booking({ user }) {
     );
   }
 
-  // Dynamic Fare & GST Calculations (No double counting)
-  const baseFare = train.price * form.passengers;
+  // Dynamic Fare & GST Calculations (accounting for journey type: one-way or round trip)
+  const journeyMultiplier = form.journeyType === 'roundTrip' ? 2 : 1;
+  const baseFare = train.price * form.passengers * journeyMultiplier;
   const mealCostPerPassenger =
     (form.meals.breakfast ? MEAL_PRICES.breakfast : 0) +
     (form.meals.lunch ? MEAL_PRICES.lunch : 0);
-  const totalMealFare = mealCostPerPassenger * form.passengers;
+  const totalMealFare = mealCostPerPassenger * form.passengers * journeyMultiplier;
   const subtotal = baseFare + totalMealFare;
   const gstAmount = Math.round(subtotal * GST_RATE);
   const totalFare = subtotal + gstAmount;
@@ -117,7 +120,7 @@ function Booking({ user }) {
       newErrors.email = 'Enter a valid email address (e.g. name@example.com).';
     }
 
-    // 4. Journey Date Validation: must not be empty and cannot be in the past
+    // 4. Outbound Journey Date Validation: must not be empty and cannot be in the past
     if (!form.date) {
       newErrors.date = 'Journey date is required.';
     } else {
@@ -127,7 +130,16 @@ function Booking({ user }) {
       }
     }
 
-    // 5. Travel Class Validation: required
+    // 5. Return Date Validation (for Round Trip)
+    if (form.journeyType === 'roundTrip') {
+      if (!form.returnDate) {
+        newErrors.returnDate = 'Return journey date is required for round trips.';
+      } else if (form.returnDate < form.date) {
+        newErrors.returnDate = 'Return date cannot be earlier than outbound journey date.';
+      }
+    }
+
+    // 6. Travel Class Validation: required
     if (!form.travelClass) {
       newErrors.travelClass = 'Please select a travel class.';
     }
@@ -168,7 +180,10 @@ function Booking({ user }) {
       arrival: train.arrival,
       duration: train.duration,
       trainPrice: train.price,
+      journeyType: form.journeyType,
+      journeyMultiplier,
       date: form.date,
+      returnDate: form.journeyType === 'roundTrip' ? form.returnDate : null,
       passengerName: form.passengerName.trim(),
       email: form.email.trim(),
       phone: cleanPhone,
@@ -302,17 +317,89 @@ function Booking({ user }) {
               </div>
             </div>
 
+            {/* Journey Type Selector */}
             <div className="form-group">
-              <label htmlFor="book-date">Journey Date *</label>
-              <input
-                id="book-date"
-                type="date"
-                min={new Date().toISOString().split('T')[0]}
-                value={form.date}
-                onChange={(e) => handleChange('date', e.target.value)}
-                style={{ borderColor: errors.date ? 'var(--error)' : undefined }}
-              />
-              {errors.date && <div className="form-error">{errors.date}</div>}
+              <label>Journey Type *</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '6px' }}>
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '12px 14px',
+                    border: form.journeyType === 'oneWay' ? '2px solid var(--secondary)' : '1px solid var(--border)',
+                    borderRadius: 'var(--radius-sm)',
+                    background: form.journeyType === 'oneWay' ? 'rgba(29, 112, 162, 0.08)' : 'var(--surface)',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                    color: form.journeyType === 'oneWay' ? 'var(--primary)' : 'var(--text)',
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="journeyType"
+                    value="oneWay"
+                    checked={form.journeyType === 'oneWay'}
+                    onChange={() => handleChange('journeyType', 'oneWay')}
+                  />
+                  <span>➡️ One-Way Journey</span>
+                </label>
+
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '12px 14px',
+                    border: form.journeyType === 'roundTrip' ? '2px solid var(--secondary)' : '1px solid var(--border)',
+                    borderRadius: 'var(--radius-sm)',
+                    background: form.journeyType === 'roundTrip' ? 'rgba(29, 112, 162, 0.08)' : 'var(--surface)',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                    color: form.journeyType === 'roundTrip' ? 'var(--primary)' : 'var(--text)',
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="journeyType"
+                    value="roundTrip"
+                    checked={form.journeyType === 'roundTrip'}
+                    onChange={() => handleChange('journeyType', 'roundTrip')}
+                  />
+                  <span>🔄 Return / Round Trip (2 legs)</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Journey Dates */}
+            <div style={{ display: 'grid', gridTemplateColumns: form.journeyType === 'roundTrip' ? '1fr 1fr' : '1fr', gap: '14px' }}>
+              <div className="form-group">
+                <label htmlFor="book-date">Outbound Journey Date *</label>
+                <input
+                  id="book-date"
+                  type="date"
+                  min={new Date().toISOString().split('T')[0]}
+                  value={form.date}
+                  onChange={(e) => handleChange('date', e.target.value)}
+                  style={{ borderColor: errors.date ? 'var(--error)' : undefined }}
+                />
+                {errors.date && <div className="form-error">{errors.date}</div>}
+              </div>
+
+              {form.journeyType === 'roundTrip' && (
+                <div className="form-group">
+                  <label htmlFor="book-returnDate">Return Journey Date *</label>
+                  <input
+                    id="book-returnDate"
+                    type="date"
+                    min={form.date || new Date().toISOString().split('T')[0]}
+                    value={form.returnDate}
+                    onChange={(e) => handleChange('returnDate', e.target.value)}
+                    style={{ borderColor: errors.returnDate ? 'var(--error)' : undefined }}
+                  />
+                  {errors.returnDate && <div className="form-error">{errors.returnDate}</div>}
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
@@ -464,8 +551,15 @@ function Booking({ user }) {
             <h3>💰 Fare Summary & Taxes</h3>
             <div className="booking-summary">
               <div className="summary-item">
+                <label>Journey Type</label>
+                <p>{form.journeyType === 'roundTrip' ? '🔄 Round Trip (2 legs)' : '➡️ One-Way'}</p>
+              </div>
+              <div className="summary-item">
                 <label>Base Ticket Fare</label>
-                <p>₹{train.price} × {form.passengers} = ₹{baseFare}</p>
+                <p>
+                  ₹{train.price} × {form.passengers} passenger{form.passengers > 1 ? 's' : ''}
+                  {journeyMultiplier === 2 ? ' × 2 (Round Trip)' : ''} = ₹{baseFare}
+                </p>
               </div>
               <div className="summary-item">
                 <label>Travel Class</label>
@@ -479,16 +573,16 @@ function Booking({ user }) {
                 <label>Meal Charges</label>
                 <p>
                   {totalMealFare > 0
-                    ? `₹${mealCostPerPassenger} × ${form.passengers} = ₹${totalMealFare}`
+                    ? `₹${mealCostPerPassenger} × ${form.passengers} passenger${form.passengers > 1 ? 's' : ''}${journeyMultiplier === 2 ? ' × 2 legs' : ''} = ₹${totalMealFare}`
                     : '₹0 (None)'}
                 </p>
               </div>
               <div className="summary-item">
-                <label>Subtotal</label>
+                <label>Subtotal (Fare + Meals)</label>
                 <p>₹{subtotal}</p>
               </div>
               <div className="summary-item">
-                <label>GST (5% applicable tax)</label>
+                <label>GST (5% on taxable charges)</label>
                 <p style={{ color: 'var(--secondary)', fontWeight: 600 }}>+ ₹{gstAmount}</p>
               </div>
             </div>

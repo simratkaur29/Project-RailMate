@@ -63,9 +63,22 @@ function MyBookings({ user }) {
                   )}
                   <div className="detail"><label>Source</label><p>{booking.source}</p></div>
                   <div className="detail"><label>Destination</label><p>{booking.destination}</p></div>
-                  <div className="detail"><label>Date</label><p>{booking.date}</p></div>
+                  <div className="detail">
+                    <label>Journey Type</label>
+                    <p>{booking.journeyType === 'roundTrip' ? '🔄 Round Trip' : '➡️ One-Way'}</p>
+                  </div>
+                  <div className="detail">
+                    <label>Date</label>
+                    <p>
+                      {booking.date}
+                      {booking.returnDate ? ` (Return: ${booking.returnDate})` : ''}
+                    </p>
+                  </div>
                   <div className="detail"><label>Passenger</label><p>{booking.passengerName}</p></div>
                   <div className="detail"><label>Class</label><p>{booking.travelClass}</p></div>
+                  {booking.baseFare && (
+                    <div className="detail"><label>Base Fare</label><p>₹{booking.baseFare}</p></div>
+                  )}
                   <div className="detail">
                     <label>Meals</label>
                     <p>
@@ -75,10 +88,11 @@ function MyBookings({ user }) {
                             booking.meals.lunch ? 'Lunch' : null,
                           ].filter(Boolean).join(', ') || 'None'
                         : 'None'}
+                      {booking.mealFare > 0 ? ` (₹${booking.mealFare})` : ''}
                     </p>
                   </div>
                   {booking.gstAmount ? (
-                    <div className="detail"><label>GST (5%)</label><p style={{ color: 'var(--secondary)' }}>₹{booking.gstAmount}</p></div>
+                    <div className="detail"><label>GST (5%)</label><p style={{ color: 'var(--secondary)' }}>+ ₹{booking.gstAmount}</p></div>
                   ) : null}
                   <div className="detail"><label>Total Paid</label><p style={{ fontWeight: 700, color: 'var(--primary)' }}>₹{booking.fare}</p></div>
                 </div>
