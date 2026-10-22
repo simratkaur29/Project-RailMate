@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Booking from './pages/Booking';
+import Payment from './pages/Payment';
 import MyBookings from './pages/MyBookings';
 import StationGuide from './pages/StationGuide';
 import SmartAssistant from './pages/SmartAssistant';
@@ -52,6 +53,7 @@ function App() {
             <Route path="/register" element={<Register onLogin={handleLogin} />} />
             <Route path="/profile" element={<Profile user={user} onLogin={handleLogin} onLogout={handleLogout} />} />
             <Route path="/booking" element={<Booking user={user} />} />
+            <Route path="/payment" element={<Payment user={user} />} />
             <Route path="/my-bookings" element={<MyBookings user={user} />} />
             <Route path="/stations" element={<StationGuide />} />
             <Route path="/assistant" element={<SmartAssistant />} />

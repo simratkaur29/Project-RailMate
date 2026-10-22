@@ -231,7 +231,7 @@ function Community() {
                     </button>
                     {(post.user === user?.name || post.user === 'Anonymous') && (
                       <button className="delete-btn" onClick={() => handleDeletePost(post.id)}>
-                        🗑️ Delete
+                        🗑️ delete
                       </button>
                     )}
                   </div>

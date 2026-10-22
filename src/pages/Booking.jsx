@@ -4,11 +4,11 @@ import '../styles/profile.css';
 
 // Realistic standard catering fares (per passenger)
 export const MEAL_PRICES = {
-  breakfast: 120, // ₹120 per passenger
-  lunch: 200,     // ₹200 per passenger
+  breakfast: 120,
+  lunch: 200,
 };
 
-export const GST_RATE = 0.05; // 5% GST on railway services and catering
+export const GST_RATE = 0.05;
 
 function Booking({ user }) {
   const location = useLocation();
@@ -60,7 +60,7 @@ function Booking({ user }) {
     );
   }
 
-  // Dynamic Fare & GST Calculations (accounting for journey type: one-way or round trip)
+  // Dynamic Fare & GST Calculations
   const journeyMultiplier = form.journeyType === 'roundTrip' ? 2 : 1;
   const baseFare = train.price * form.passengers * journeyMultiplier;
   const mealCostPerPassenger =
@@ -74,10 +74,7 @@ function Booking({ user }) {
   const handleMealToggle = (mealType) => {
     setForm((prev) => ({
       ...prev,
-      meals: {
-        ...prev.meals,
-        [mealType]: !prev.meals[mealType],
-      },
+      meals: { ...prev.meals, [mealType]: !prev.meals[mealType] },
     }));
   };
 
@@ -89,7 +86,6 @@ function Booking({ user }) {
     return items.length > 0 ? items.join(' + ') : 'None (No meals selected)';
   };
 
-  // Field change handler that clears specific errors
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -97,35 +93,31 @@ function Booking({ user }) {
     }
   };
 
-  // Comprehensive Regex & Business Logic Validation
+  // Validation
   const validateForm = () => {
     const newErrors = {};
 
-    // 1. Passenger Name Regex: Only alphabetic characters and spaces (3-50 chars)
     const nameRegex = /^[A-Za-z\s]{3,50}$/;
     if (!form.passengerName.trim()) {
       newErrors.passengerName = 'Passenger name is required.';
     } else if (!nameRegex.test(form.passengerName.trim())) {
-      newErrors.passengerName = 'Name must contain only alphabetic letters and spaces (3 to 50 characters).';
+      newErrors.passengerName = 'Name must contain only letters and spaces (3-50 chars).';
     }
 
-    // 2. Indian Phone Number Regex: optional +91/91, exactly 10 digits starting with 6, 7, 8, or 9
     const phoneRegex = /^(?:(?:\+?91[\-\s]?)?[6-9]\d{9})$/;
     if (!form.phone.trim()) {
       newErrors.phone = 'Mobile phone number is required.';
     } else if (!phoneRegex.test(form.phone.trim().replace(/\s+/g, ''))) {
-      newErrors.phone = 'Enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.';
+      newErrors.phone = 'Enter a valid 10-digit Indian phone number.';
     }
 
-    // 3. Email Address Regex: RFC 5322 compliant standard format
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!form.email.trim()) {
       newErrors.email = 'Email address is required.';
     } else if (!emailRegex.test(form.email.trim())) {
-      newErrors.email = 'Enter a valid email address (e.g. name@example.com).';
+      newErrors.email = 'Enter a valid email address.';
     }
 
-    // 4. Outbound Journey Date Validation: must not be empty and cannot be in the past
     if (!form.date) {
       newErrors.date = 'Journey date is required.';
     } else {
@@ -135,16 +127,14 @@ function Booking({ user }) {
       }
     }
 
-    // 5. Return Date Validation (for Round Trip)
     if (form.journeyType === 'roundTrip') {
       if (!form.returnDate) {
-        newErrors.returnDate = 'Return journey date is required for round trips.';
+        newErrors.returnDate = 'Return date is required for round trips.';
       } else if (form.returnDate < form.date) {
-        newErrors.returnDate = 'Return date cannot be earlier than outbound journey date.';
+        newErrors.returnDate = 'Return date cannot be earlier than journey date.';
       }
     }
 
-    // 6. Travel Class Validation: required
     if (!form.travelClass) {
       newErrors.travelClass = 'Please select a travel class.';
     }
@@ -152,11 +142,9 @@ function Booking({ user }) {
     return newErrors;
   };
 
-  // Handle booking confirmation
   const handleConfirm = (e) => {
     e.preventDefault();
 
-    // Login requirement check
     if (!user) {
       setErrors({ auth: 'Please login or register to complete your ticket booking.' });
       return;
@@ -166,17 +154,14 @@ function Booking({ user }) {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
-      // Focus first error field for accessibility
       const firstKey = Object.keys(validationErrors)[0];
       const el = document.getElementById(`book-${firstKey}`);
       if (el) el.focus();
       return;
     }
 
-    // Normalize phone number to clean 10 digits
     const cleanPhone = form.phone.trim().replace(/\D/g, '').slice(-10);
 
-    // Create confirmed booking
     const booking = {
       id: 'RM' + Date.now().toString().slice(-8),
       trainName: train.name,
@@ -209,7 +194,6 @@ function Booking({ user }) {
       bookedOn: new Date().toISOString().split('T')[0],
     };
 
-    // Save to localStorage
     const existingBookings = JSON.parse(localStorage.getItem('railmate_bookings') || '[]');
     existingBookings.push(booking);
     localStorage.setItem('railmate_bookings', JSON.stringify(existingBookings));
@@ -272,7 +256,7 @@ function Booking({ user }) {
     );
   }
 
-  // Booking Form View
+  // Booking Form
   return (
     <main className="booking-page">
       <div className="page-header">
@@ -296,7 +280,7 @@ function Booking({ user }) {
           </div>
         </div>
 
-        {/* Authentication Notice Banner if not logged in */}
+        {/* Auth notice */}
         {errors.auth && (
           <div
             className="card"
@@ -316,19 +300,13 @@ function Booking({ user }) {
                 {errors.auth}
               </p>
             </div>
-            <Link to="/login" className="btn btn-primary btn-sm">
-              Login Now →
-            </Link>
+            <Link to="/login" className="btn btn-primary btn-sm">Login Now →</Link>
           </div>
         )}
 
-        {/* Booking Form with Validation */}
         <form onSubmit={handleConfirm} noValidate>
           <div className="booking-card card">
             <h3>👤 Passenger & Contact Details</h3>
-            <p style={{ color: 'var(--text-light)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-              All fields are verified using standard Indian railway booking rules.
-            </p>
 
             <div className="form-group">
               <label htmlFor="book-passengerName">Passenger Full Name *</label>
@@ -349,14 +327,13 @@ function Booking({ user }) {
                 <input
                   id="book-phone"
                   type="tel"
-                  placeholder="e.g. 9876543210 or +91 9876543210"
+                  placeholder="e.g. 9876543210"
                   value={form.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   style={{ borderColor: errors.phone ? 'var(--error)' : undefined }}
                 />
                 {errors.phone && <div className="form-error">{errors.phone}</div>}
               </div>
-
               <div className="form-group">
                 <label htmlFor="book-email">Email Address *</label>
                 <input
@@ -371,115 +348,50 @@ function Booking({ user }) {
               </div>
             </div>
 
-            {/* Journey Type Selector */}
+            {/* Journey Type */}
             <div className="form-group">
               <label>Journey Type *</label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '6px' }}>
-                <label
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '12px 14px',
-                    border: form.journeyType === 'oneWay' ? '2px solid var(--secondary)' : '1px solid var(--border)',
-                    borderRadius: 'var(--radius-sm)',
-                    background: form.journeyType === 'oneWay' ? 'rgba(29, 112, 162, 0.08)' : 'var(--surface)',
-                    cursor: 'pointer',
-                    fontWeight: 600,
-                    color: form.journeyType === 'oneWay' ? 'var(--primary)' : 'var(--text)',
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="journeyType"
-                    value="oneWay"
-                    checked={form.journeyType === 'oneWay'}
-                    onChange={() => handleChange('journeyType', 'oneWay')}
-                  />
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', border: form.journeyType === 'oneWay' ? '2px solid var(--secondary)' : '1px solid var(--border)', borderRadius: 'var(--radius-sm)', background: form.journeyType === 'oneWay' ? 'rgba(29, 112, 162, 0.08)' : 'var(--surface)', cursor: 'pointer', fontWeight: 600 }}>
+                  <input type="radio" name="journeyType" value="oneWay" checked={form.journeyType === 'oneWay'} onChange={() => handleChange('journeyType', 'oneWay')} />
                   <span>➡️ One-Way Journey</span>
                 </label>
-
-                <label
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '12px 14px',
-                    border: form.journeyType === 'roundTrip' ? '2px solid var(--secondary)' : '1px solid var(--border)',
-                    borderRadius: 'var(--radius-sm)',
-                    background: form.journeyType === 'roundTrip' ? 'rgba(29, 112, 162, 0.08)' : 'var(--surface)',
-                    cursor: 'pointer',
-                    fontWeight: 600,
-                    color: form.journeyType === 'roundTrip' ? 'var(--primary)' : 'var(--text)',
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="journeyType"
-                    value="roundTrip"
-                    checked={form.journeyType === 'roundTrip'}
-                    onChange={() => handleChange('journeyType', 'roundTrip')}
-                  />
-                  <span>🔄 Return / Round Trip (2 legs)</span>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', border: form.journeyType === 'roundTrip' ? '2px solid var(--secondary)' : '1px solid var(--border)', borderRadius: 'var(--radius-sm)', background: form.journeyType === 'roundTrip' ? 'rgba(29, 112, 162, 0.08)' : 'var(--surface)', cursor: 'pointer', fontWeight: 600 }}>
+                  <input type="radio" name="journeyType" value="roundTrip" checked={form.journeyType === 'roundTrip'} onChange={() => handleChange('journeyType', 'roundTrip')} />
+                  <span>🔄 Round Trip</span>
                 </label>
               </div>
             </div>
 
-            {/* Journey Dates */}
+            {/* Dates */}
             <div style={{ display: 'grid', gridTemplateColumns: form.journeyType === 'roundTrip' ? '1fr 1fr' : '1fr', gap: '14px' }}>
               <div className="form-group">
-                <label htmlFor="book-date">Outbound Journey Date *</label>
-                <input
-                  id="book-date"
-                  type="date"
-                  min={new Date().toISOString().split('T')[0]}
-                  value={form.date}
-                  onChange={(e) => handleChange('date', e.target.value)}
-                  style={{ borderColor: errors.date ? 'var(--error)' : undefined }}
-                />
+                <label htmlFor="book-date">Journey Date *</label>
+                <input id="book-date" type="date" min={new Date().toISOString().split('T')[0]} value={form.date} onChange={(e) => handleChange('date', e.target.value)} style={{ borderColor: errors.date ? 'var(--error)' : undefined }} />
                 {errors.date && <div className="form-error">{errors.date}</div>}
               </div>
-
               {form.journeyType === 'roundTrip' && (
                 <div className="form-group">
-                  <label htmlFor="book-returnDate">Return Journey Date *</label>
-                  <input
-                    id="book-returnDate"
-                    type="date"
-                    min={form.date || new Date().toISOString().split('T')[0]}
-                    value={form.returnDate}
-                    onChange={(e) => handleChange('returnDate', e.target.value)}
-                    style={{ borderColor: errors.returnDate ? 'var(--error)' : undefined }}
-                  />
+                  <label htmlFor="book-returnDate">Return Date *</label>
+                  <input id="book-returnDate" type="date" min={form.date || new Date().toISOString().split('T')[0]} value={form.returnDate} onChange={(e) => handleChange('returnDate', e.target.value)} style={{ borderColor: errors.returnDate ? 'var(--error)' : undefined }} />
                   {errors.returnDate && <div className="form-error">{errors.returnDate}</div>}
                 </div>
               )}
             </div>
 
+            {/* Class & Seat */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
               <div className="form-group">
                 <label htmlFor="book-travelClass">Travel Class *</label>
-                <select
-                  id="book-travelClass"
-                  value={form.travelClass}
-                  onChange={(e) => handleChange('travelClass', e.target.value)}
-                  style={{ borderColor: errors.travelClass ? 'var(--error)' : undefined }}
-                >
+                <select id="book-travelClass" value={form.travelClass} onChange={(e) => handleChange('travelClass', e.target.value)} style={{ borderColor: errors.travelClass ? 'var(--error)' : undefined }}>
                   <option value="">Select Class</option>
-                  {train.classes.map((cls) => (
-                    <option key={cls} value={cls}>{cls}</option>
-                  ))}
+                  {train.classes.map((cls) => (<option key={cls} value={cls}>{cls}</option>))}
                 </select>
                 {errors.travelClass && <div className="form-error">{errors.travelClass}</div>}
               </div>
-
               <div className="form-group">
                 <label htmlFor="book-seatPreference">Seat / Berth Preference</label>
-                <select
-                  id="book-seatPreference"
-                  value={form.seatPreference}
-                  onChange={(e) => handleChange('seatPreference', e.target.value)}
-                >
+                <select id="book-seatPreference" value={form.seatPreference} onChange={(e) => handleChange('seatPreference', e.target.value)}>
                   <option value="No Preference">No Preference</option>
                   <option value="Lower Berth">Lower Berth</option>
                   <option value="Upper Berth">Upper Berth</option>
@@ -492,110 +404,49 @@ function Booking({ user }) {
 
             <div className="form-group">
               <label htmlFor="book-count">Number of Passengers</label>
-              <select
-                id="book-count"
-                value={form.passengers}
-                onChange={(e) => handleChange('passengers', parseInt(e.target.value))}
-              >
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <option key={n} value={n}>
-                    {n} Passenger{n > 1 ? 's' : ''}
-                  </option>
-                ))}
+              <select id="book-count" value={form.passengers} onChange={(e) => handleChange('passengers', parseInt(e.target.value))}>
+                {[1, 2, 3, 4, 5, 6].map((n) => (<option key={n} value={n}>{n} Passenger{n > 1 ? 's' : ''}</option>))}
               </select>
             </div>
           </div>
 
-          {/* Food & Meal Options */}
+          {/* Meals */}
           <div className="booking-card card">
             <h3>🍽️ Food & Catering Options</h3>
             <p style={{ color: 'var(--text-light)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
-              Pre-book freshly prepared IRCTC catering meals. Choose breakfast, lunch, both, or neither. Meal charges are calculated per passenger.
+              Pre-book IRCTC catering meals. Charges calculated per passenger.
             </p>
-
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
-              {/* Breakfast Option */}
-              <label
-                htmlFor="meal-breakfast"
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '12px',
-                  padding: '14px',
-                  border: form.meals.breakfast ? '2px solid var(--secondary)' : '1px solid var(--border)',
-                  borderRadius: 'var(--radius-sm)',
-                  background: form.meals.breakfast ? 'rgba(29, 112, 162, 0.06)' : 'var(--surface)',
-                  cursor: 'pointer',
-                  transition: 'var(--transition)',
-                }}
-              >
-                <input
-                  id="meal-breakfast"
-                  type="checkbox"
-                  checked={form.meals.breakfast}
-                  onChange={() => handleMealToggle('breakfast')}
-                  style={{ width: '18px', height: '18px', marginTop: '2px', cursor: 'pointer' }}
-                />
+              <label htmlFor="meal-breakfast" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '14px', border: form.meals.breakfast ? '2px solid var(--secondary)' : '1px solid var(--border)', borderRadius: 'var(--radius-sm)', background: form.meals.breakfast ? 'rgba(29, 112, 162, 0.06)' : 'var(--surface)', cursor: 'pointer' }}>
+                <input id="meal-breakfast" type="checkbox" checked={form.meals.breakfast} onChange={() => handleMealToggle('breakfast')} style={{ width: '18px', height: '18px', marginTop: '2px' }} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <strong style={{ color: 'var(--primary)', fontSize: '0.95rem' }}>🍳 Breakfast</strong>
-                    <span style={{ fontWeight: 700, color: 'var(--secondary)' }}>₹{MEAL_PRICES.breakfast} / person</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <strong style={{ color: 'var(--primary)' }}>🍳 Breakfast</strong>
+                    <span style={{ fontWeight: 700, color: 'var(--secondary)' }}>₹{MEAL_PRICES.breakfast}/person</span>
                   </div>
-                  <p style={{ fontSize: '0.82rem', color: 'var(--text-light)', marginTop: '4px', margin: 0 }}>
-                    Morning breakfast served with tea or coffee (veg cutlet / idli vada / poha)
-                  </p>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-light)', margin: 0 }}>Veg cutlet / idli vada / poha with tea</p>
                 </div>
               </label>
-
-              {/* Lunch Option */}
-              <label
-                htmlFor="meal-lunch"
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '12px',
-                  padding: '14px',
-                  border: form.meals.lunch ? '2px solid var(--secondary)' : '1px solid var(--border)',
-                  borderRadius: 'var(--radius-sm)',
-                  background: form.meals.lunch ? 'rgba(29, 112, 162, 0.06)' : 'var(--surface)',
-                  cursor: 'pointer',
-                  transition: 'var(--transition)',
-                }}
-              >
-                <input
-                  id="meal-lunch"
-                  type="checkbox"
-                  checked={form.meals.lunch}
-                  onChange={() => handleMealToggle('lunch')}
-                  style={{ width: '18px', height: '18px', marginTop: '2px', cursor: 'pointer' }}
-                />
+              <label htmlFor="meal-lunch" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '14px', border: form.meals.lunch ? '2px solid var(--secondary)' : '1px solid var(--border)', borderRadius: 'var(--radius-sm)', background: form.meals.lunch ? 'rgba(29, 112, 162, 0.06)' : 'var(--surface)', cursor: 'pointer' }}>
+                <input id="meal-lunch" type="checkbox" checked={form.meals.lunch} onChange={() => handleMealToggle('lunch')} style={{ width: '18px', height: '18px', marginTop: '2px' }} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <strong style={{ color: 'var(--primary)', fontSize: '0.95rem' }}>🍱 Lunch / Dinner</strong>
-                    <span style={{ fontWeight: 700, color: 'var(--secondary)' }}>₹{MEAL_PRICES.lunch} / person</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <strong style={{ color: 'var(--primary)' }}>🍱 Lunch / Dinner</strong>
+                    <span style={{ fontWeight: 700, color: 'var(--secondary)' }}>₹{MEAL_PRICES.lunch}/person</span>
                   </div>
-                  <p style={{ fontSize: '0.82rem', color: 'var(--text-light)', marginTop: '4px', margin: 0 }}>
-                    Standard North/South Indian Thali (dal, paneer/curry, rice, 3 rotis, curd, sweet)
-                  </p>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-light)', margin: 0 }}>North/South Indian Thali</p>
                 </div>
               </label>
             </div>
-
-            <div style={{ marginTop: '14px', fontSize: '0.86rem', color: 'var(--text-muted)' }}>
+            <div style={{ marginTop: '14px', fontSize: '0.86rem' }}>
               {form.meals.breakfast && form.meals.lunch ? (
-                <span style={{ color: 'var(--success)', fontWeight: 600 }}>
-                  ✓ Both Breakfast & Lunch selected (₹{MEAL_PRICES.breakfast + MEAL_PRICES.lunch} × {form.passengers} passenger{form.passengers > 1 ? 's' : ''} = ₹{totalMealFare})
-                </span>
+                <span style={{ color: 'var(--success)', fontWeight: 600 }}>✓ Both selected = ₹{totalMealFare}</span>
               ) : form.meals.breakfast ? (
-                <span style={{ color: 'var(--primary)', fontWeight: 600 }}>
-                  ✓ Breakfast selected (₹{MEAL_PRICES.breakfast} × {form.passengers} passenger{form.passengers > 1 ? 's' : ''} = ₹{totalMealFare})
-                </span>
+                <span style={{ color: 'var(--primary)', fontWeight: 600 }}>✓ Breakfast = ₹{totalMealFare}</span>
               ) : form.meals.lunch ? (
-                <span style={{ color: 'var(--primary)', fontWeight: 600 }}>
-                  ✓ Lunch selected (₹{MEAL_PRICES.lunch} × {form.passengers} passenger{form.passengers > 1 ? 's' : ''} = ₹{totalMealFare})
-                </span>
+                <span style={{ color: 'var(--primary)', fontWeight: 600 }}>✓ Lunch = ₹{totalMealFare}</span>
               ) : (
-                <span>ℹ️ No meals selected (opted out — ₹0 meal charge)</span>
+                <span style={{ color: 'var(--text-muted)' }}>ℹ️ No meals selected</span>
               )}
             </div>
           </div>
@@ -604,70 +455,26 @@ function Booking({ user }) {
           <div className="booking-card card">
             <h3>💰 Fare Summary & Taxes</h3>
             <div className="booking-summary">
-              <div className="summary-item">
-                <label>Journey Type</label>
-                <p>{form.journeyType === 'roundTrip' ? '🔄 Round Trip (2 legs)' : '➡️ One-Way'}</p>
-              </div>
-              <div className="summary-item">
-                <label>Base Ticket Fare</label>
-                <p>
-                  ₹{train.price} × {form.passengers} passenger{form.passengers > 1 ? 's' : ''}
-                  {journeyMultiplier === 2 ? ' × 2 (Round Trip)' : ''} = ₹{baseFare}
-                </p>
-              </div>
-              <div className="summary-item">
-                <label>Travel Class</label>
-                <p>{form.travelClass || 'Not selected'}</p>
-              </div>
-              <div className="summary-item">
-                <label>Selected Meals</label>
-                <p>{getMealsLabel(form.meals)}</p>
-              </div>
-              <div className="summary-item">
-                <label>Meal Charges</label>
-                <p>
-                  {totalMealFare > 0
-                    ? `₹${mealCostPerPassenger} × ${form.passengers} passenger${form.passengers > 1 ? 's' : ''}${journeyMultiplier === 2 ? ' × 2 legs' : ''} = ₹${totalMealFare}`
-                    : '₹0 (None)'}
-                </p>
-              </div>
-              <div className="summary-item">
-                <label>Subtotal (Fare + Meals)</label>
-                <p>₹{subtotal}</p>
-              </div>
-              <div className="summary-item">
-                <label>GST (5% on taxable charges)</label>
-                <p style={{ color: 'var(--secondary)', fontWeight: 600 }}>+ ₹{gstAmount}</p>
-              </div>
+              <div className="summary-item"><label>Journey Type</label><p>{form.journeyType === 'roundTrip' ? '🔄 Round Trip' : '➡️ One-Way'}</p></div>
+              <div className="summary-item"><label>Base Fare</label><p>₹{train.price} × {form.passengers}{journeyMultiplier === 2 ? ' × 2' : ''} = ₹{baseFare}</p></div>
+              <div className="summary-item"><label>Class</label><p>{form.travelClass || 'Not selected'}</p></div>
+              <div className="summary-item"><label>Meals</label><p>{getMealsLabel(form.meals)}</p></div>
+              <div className="summary-item"><label>Meal Charges</label><p>{totalMealFare > 0 ? `₹${totalMealFare}` : '₹0'}</p></div>
+              <div className="summary-item"><label>Subtotal</label><p>₹{subtotal}</p></div>
+              <div className="summary-item"><label>GST (5%)</label><p style={{ color: 'var(--secondary)', fontWeight: 600 }}>+ ₹{gstAmount}</p></div>
             </div>
 
             <div className="booking-total">
-              <span className="total-label">Final Payable Total (Fare + Meals + GST)</span>
+              <span className="total-label">Total Payable</span>
               <span className="total-amount">₹{totalFare}</span>
             </div>
 
-            <div
-              style={{
-                marginTop: '1.25rem',
-                padding: '12px 14px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'rgba(29, 112, 162, 0.06)',
-                border: '1px solid rgba(29, 112, 162, 0.2)',
-                fontSize: '0.84rem',
-                color: 'var(--text-light)',
-              }}
-            >
-              <div style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: '3px' }}>
-                💳 Payment Gateway Note (Simulated Demo Mode)
-              </div>
-              No real payments are deducted. Payment gateway requirements (webhook verification, tokenization & PCI-DSS compliance) have been investigated for future gateway integration.
+            <div style={{ marginTop: '1.25rem', padding: '12px 14px', borderRadius: 'var(--radius-sm)', background: 'rgba(29, 112, 162, 0.06)', border: '1px solid rgba(29, 112, 162, 0.2)', fontSize: '0.84rem', color: 'var(--text-light)' }}>
+              <div style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: '3px' }}>💳 Simulated Demo Mode</div>
+              No real payments are deducted. Booking is confirmed instantly.
             </div>
 
-            <button
-              type="submit"
-              className="btn btn-accent"
-              style={{ width: '100%', marginTop: '1rem', padding: '14px', fontSize: '1.05rem', fontWeight: 700 }}
-            >
+            <button type="submit" className="btn btn-accent" style={{ width: '100%', marginTop: '1rem', padding: '14px', fontSize: '1.05rem', fontWeight: 700 }}>
               ✅ Confirm & Book Ticket (₹{totalFare})
             </button>
           </div>
