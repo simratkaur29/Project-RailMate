@@ -20,6 +20,7 @@ import MyTrips from './pages/MyTrips';
 import './styles/global.css';
 import './styles/profile.css';
 
+
 function App() {
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('railmate_user');
@@ -41,12 +42,23 @@ function App() {
     localStorage.setItem('railmate_logged_in', 'false');
   };
 
+  const [showLoginPopup, setShowLoginPopup] = useState(() => {
+  const saved = localStorage.getItem('railmate_user');
+  const loggedIn = localStorage.getItem('railmate_logged_in');
+
+  if (saved && loggedIn === 'true') {
+    return false;
+  }
+
+  return sessionStorage.getItem('railmate_popup_dismissed') !== 'true';
+});
+
   return (
     <Router>
       <JourneyProvider>
-        <div className="app">
-          <Navbar user={user} onLogout={handleLogout} />
-          <Routes>
+       <div className="app">
+  <Navbar user={user} onLogout={handleLogout} />
+  <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/trains" element={<Trains />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
@@ -62,6 +74,8 @@ function App() {
             <Route path="/destination/:city" element={<DestinationGuide />} />
             <Route path="/my-trips" element={<MyTrips />} />
           </Routes>
+
+          
           <Footer />
         </div>
       </JourneyProvider>
