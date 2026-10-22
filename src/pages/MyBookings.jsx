@@ -63,6 +63,17 @@ function MyBookings({ user }) {
                   <div className="detail"><label>Date</label><p>{booking.date}</p></div>
                   <div className="detail"><label>Passenger</label><p>{booking.passengerName}</p></div>
                   <div className="detail"><label>Class</label><p>{booking.travelClass}</p></div>
+                  <div className="detail">
+                    <label>Meals</label>
+                    <p>
+                      {booking.meals
+                        ? [
+                            booking.meals.breakfast ? 'Breakfast' : null,
+                            booking.meals.lunch ? 'Lunch' : null,
+                          ].filter(Boolean).join(', ') || 'None'
+                        : 'None'}
+                    </p>
+                  </div>
                   <div className="detail"><label>Fare</label><p>₹{booking.fare}</p></div>
                 </div>
 

@@ -2,6 +2,12 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/profile.css';
 
+// Realistic standard catering fares (per passenger)
+export const MEAL_PRICES = {
+  breakfast: 120, // ₹120 per passenger
+  lunch: 200,     // ₹200 per passenger
+};
+
 function Booking({ user }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -13,6 +19,10 @@ function Booking({ user }) {
     travelClass: '',
     seatPreference: 'No Preference',
     passengers: 1,
+    meals: {
+      breakfast: false,
+      lunch: false,
+    },
   });
   const [confirmed, setConfirmed] = useState(false);
   const [bookingData, setBookingData] = useState(null);
@@ -38,7 +48,31 @@ function Booking({ user }) {
     );
   }
 
-  const totalFare = train.price * form.passengers;
+  // Dynamic Fare Calculations
+  const baseFare = train.price * form.passengers;
+  const mealCostPerPassenger =
+    (form.meals.breakfast ? MEAL_PRICES.breakfast : 0) +
+    (form.meals.lunch ? MEAL_PRICES.lunch : 0);
+  const totalMealFare = mealCostPerPassenger * form.passengers;
+  const totalFare = baseFare + totalMealFare;
+
+  const handleMealToggle = (mealType) => {
+    setForm((prev) => ({
+      ...prev,
+      meals: {
+        ...prev.meals,
+        [mealType]: !prev.meals[mealType],
+      },
+    }));
+  };
+
+  const getMealsLabel = (meals) => {
+    if (!meals) return 'None';
+    const items = [];
+    if (meals.breakfast) items.push('Breakfast (₹' + MEAL_PRICES.breakfast + ')');
+    if (meals.lunch) items.push('Lunch (₹' + MEAL_PRICES.lunch + ')');
+    return items.length > 0 ? items.join(' + ') : 'None (No meals selected)';
+  };
 
   const handleConfirm = (e) => {
     e.preventDefault();
@@ -65,6 +99,12 @@ function Booking({ user }) {
       travelClass: form.travelClass,
       seatPreference: form.seatPreference,
       passengers: form.passengers,
+      baseFare,
+      meals: {
+        breakfast: form.meals.breakfast,
+        lunch: form.meals.lunch,
+      },
+      mealFare: totalMealFare,
       fare: totalFare,
       status: 'Confirmed',
       bookedOn: new Date().toISOString().split('T')[0],
@@ -101,7 +141,11 @@ function Booking({ user }) {
               <div className="summary-item"><label>Source</label><p>{bookingData.source}</p></div>
               <div className="summary-item"><label>Destination</label><p>{bookingData.destination}</p></div>
               <div className="summary-item"><label>Class</label><p>{bookingData.travelClass}</p></div>
-              <div className="summary-item"><label>Total Fare</label><p>₹{bookingData.fare}</p></div>
+              <div className="summary-item"><label>Seat Preference</label><p>{bookingData.seatPreference}</p></div>
+              <div className="summary-item"><label>Base Ticket Fare</label><p>₹{bookingData.baseFare || (train.price * bookingData.passengers)}</p></div>
+              <div className="summary-item"><label>Meals Selected</label><p>{getMealsLabel(bookingData.meals)}</p></div>
+              <div className="summary-item"><label>Meal Charges</label><p>₹{bookingData.mealFare || 0}</p></div>
+              <div className="summary-item"><label>Total Paid Fare</label><p style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem' }}>₹{bookingData.fare}</p></div>
             </div>
 
             <div style={{ marginTop: '2rem', display: 'flex', gap: '12px', justifyContent: 'center' }}>
@@ -179,18 +223,149 @@ function Booking({ user }) {
             </div>
           </div>
 
+          {/* Food & Meal Options */}
           <div className="booking-card card">
-            <h3>💰 Fare Summary</h3>
-            <div className="booking-summary">
-              <div className="summary-item"><label>Base Fare</label><p>₹{train.price} × {form.passengers}</p></div>
-              <div className="summary-item"><label>Class</label><p>{form.travelClass || 'Not selected'}</p></div>
+            <h3>🍽️ Food & Catering Options</h3>
+            <p style={{ color: 'var(--text-light)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
+              Pre-book freshly prepared IRCTC catering meals. Choose breakfast, lunch, both, or neither. Meal charges are calculated per passenger.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+              {/* Breakfast Option */}
+              <label
+                htmlFor="meal-breakfast"
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '12px',
+                  padding: '14px',
+                  border: form.meals.breakfast ? '2px solid var(--secondary)' : '1px solid var(--border)',
+                  borderRadius: 'var(--radius-sm)',
+                  background: form.meals.breakfast ? 'rgba(29, 112, 162, 0.06)' : 'var(--surface)',
+                  cursor: 'pointer',
+                  transition: 'var(--transition)',
+                }}
+              >
+                <input
+                  id="meal-breakfast"
+                  type="checkbox"
+                  checked={form.meals.breakfast}
+                  onChange={() => handleMealToggle('breakfast')}
+                  style={{ width: '18px', height: '18px', marginTop: '2px', cursor: 'pointer' }}
+                />
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <strong style={{ color: 'var(--primary)', fontSize: '0.95rem' }}>🍳 Breakfast</strong>
+                    <span style={{ fontWeight: 700, color: 'var(--secondary)' }}>₹{MEAL_PRICES.breakfast} / person</span>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-light)', marginTop: '4px', margin: 0 }}>
+                    Morning breakfast served with tea or coffee (veg cutlet / idli vada / poha)
+                  </p>
+                </div>
+              </label>
+
+              {/* Lunch Option */}
+              <label
+                htmlFor="meal-lunch"
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '12px',
+                  padding: '14px',
+                  border: form.meals.lunch ? '2px solid var(--secondary)' : '1px solid var(--border)',
+                  borderRadius: 'var(--radius-sm)',
+                  background: form.meals.lunch ? 'rgba(29, 112, 162, 0.06)' : 'var(--surface)',
+                  cursor: 'pointer',
+                  transition: 'var(--transition)',
+                }}
+              >
+                <input
+                  id="meal-lunch"
+                  type="checkbox"
+                  checked={form.meals.lunch}
+                  onChange={() => handleMealToggle('lunch')}
+                  style={{ width: '18px', height: '18px', marginTop: '2px', cursor: 'pointer' }}
+                />
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <strong style={{ color: 'var(--primary)', fontSize: '0.95rem' }}>🍱 Lunch / Dinner</strong>
+                    <span style={{ fontWeight: 700, color: 'var(--secondary)' }}>₹{MEAL_PRICES.lunch} / person</span>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-light)', marginTop: '4px', margin: 0 }}>
+                    Standard North/South Indian Thali (dal, paneer/curry, rice, 3 rotis, curd, sweet)
+                  </p>
+                </div>
+              </label>
             </div>
+
+            <div style={{ marginTop: '14px', fontSize: '0.86rem', color: 'var(--text-muted)' }}>
+              {form.meals.breakfast && form.meals.lunch ? (
+                <span style={{ color: 'var(--success)', fontWeight: 600 }}>
+                  ✓ Both Breakfast & Lunch selected (₹{MEAL_PRICES.breakfast + MEAL_PRICES.lunch} × {form.passengers} passenger{form.passengers > 1 ? 's' : ''} = ₹{totalMealFare})
+                </span>
+              ) : form.meals.breakfast ? (
+                <span style={{ color: 'var(--primary)', fontWeight: 600 }}>
+                  ✓ Breakfast selected (₹{MEAL_PRICES.breakfast} × {form.passengers} passenger{form.passengers > 1 ? 's' : ''} = ₹{totalMealFare})
+                </span>
+              ) : form.meals.lunch ? (
+                <span style={{ color: 'var(--primary)', fontWeight: 600 }}>
+                  ✓ Lunch selected (₹{MEAL_PRICES.lunch} × {form.passengers} passenger{form.passengers > 1 ? 's' : ''} = ₹{totalMealFare})
+                </span>
+              ) : (
+                <span>ℹ️ No meals selected (opted out — ₹0 meal charge)</span>
+              )}
+            </div>
+          </div>
+
+          <div className="booking-card card">
+            <h3>💰 Fare Summary & Payment</h3>
+            <div className="booking-summary">
+              <div className="summary-item">
+                <label>Base Ticket Fare</label>
+                <p>₹{train.price} × {form.passengers} = ₹{baseFare}</p>
+              </div>
+              <div className="summary-item">
+                <label>Travel Class</label>
+                <p>{form.travelClass || 'Not selected'}</p>
+              </div>
+              <div className="summary-item">
+                <label>Selected Meals</label>
+                <p>{getMealsLabel(form.meals)}</p>
+              </div>
+              <div className="summary-item">
+                <label>Meal Charges</label>
+                <p>
+                  {totalMealFare > 0
+                    ? `₹${mealCostPerPassenger} × ${form.passengers} = ₹${totalMealFare}`
+                    : '₹0 (None)'}
+                </p>
+              </div>
+            </div>
+
             <div className="booking-total">
-              <span className="total-label">Total Fare</span>
+              <span className="total-label">Total Fare (Tickets + Meals)</span>
               <span className="total-amount">₹{totalFare}</span>
             </div>
-            <button type="submit" className="btn btn-accent" style={{ width: '100%', marginTop: '1rem', padding: '14px' }}>
-              ✅ Confirm Booking
+
+            <div
+              style={{
+                marginTop: '1.25rem',
+                padding: '12px 14px',
+                borderRadius: 'var(--radius-sm)',
+                background: 'rgba(29, 112, 162, 0.06)',
+                border: '1px solid rgba(29, 112, 162, 0.2)',
+                fontSize: '0.84rem',
+                color: 'var(--text-light)',
+              }}
+            >
+              <div style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: '3px' }}>
+                💳 Payment Simulation
+              </div>
+              Instant mock checkout. All ticket fares, catering additions, and passenger details are validated and saved securely upon confirmation.
+            </div>
+
+            <button type="submit" className="btn btn-accent" style={{ width: '100%', marginTop: '1rem', padding: '14px', fontSize: '1rem' }}>
+              ✅ Confirm & Pay ₹{totalFare}
             </button>
           </div>
         </form>
