@@ -1,6 +1,9 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/userSlice';
 import ReviewCard from '../components/ReviewCard';
 import AnnouncementCard from '../components/AnnouncementCard';
+import FormInput from '../components/FormInput';
 import reviewsData from '../data/reviews';
 import '../styles/community.css';
 
@@ -20,7 +23,8 @@ const railwayTips = [
   { id: 5, tip: 'Use only authorized IRCTC food services for hygienic meals during your journey.' },
 ];
 
-function Community({ user }) {
+function Community() {
+  const user = useSelector(selectUser);
   const [activeTab, setActiveTab] = useState('announcements');
   const [reviews, setReviews] = useState(reviewsData);
   const [newReview, setNewReview] = useState({ train: '', rating: 5, text: '' });
@@ -149,16 +153,14 @@ function Community({ user }) {
             <div className="review-form">
               <h3>Write a Review</h3>
               <form onSubmit={handleAddReview}>
-                <div className="form-group">
-                  <label htmlFor="review-train">Train Name</label>
-                  <input
-                    id="review-train"
-                    type="text"
-                    placeholder="e.g. Rajdhani Express"
-                    value={newReview.train}
-                    onChange={(e) => setNewReview({ ...newReview, train: e.target.value })}
-                  />
-                </div>
+                <FormInput
+                  id="review-train"
+                  label="Train Name"
+                  type="text"
+                  placeholder="e.g. Rajdhani Express"
+                  value={newReview.train}
+                  onChange={(val) => setNewReview({ ...newReview, train: val })}
+                />
                 <div className="form-group">
                   <label>Rating</label>
                   <div className="rating-input">
@@ -173,16 +175,15 @@ function Community({ user }) {
                     ))}
                   </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="review-text">Your Review</label>
-                  <textarea
-                    id="review-text"
-                    placeholder="Share your experience..."
-                    value={newReview.text}
-                    onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
-                    rows="3"
-                  />
-                </div>
+                <FormInput
+                  id="review-text"
+                  label="Your Review"
+                  type="textarea"
+                  placeholder="Share your experience..."
+                  value={newReview.text}
+                  onChange={(val) => setNewReview({ ...newReview, text: val })}
+                  rows={3}
+                />
                 <button type="submit" className="btn btn-primary">Submit Review</button>
               </form>
             </div>
@@ -201,10 +202,13 @@ function Community({ user }) {
           <div>
             <div className="post-form">
               <form onSubmit={handleAddPost}>
-                <textarea
+                <FormInput
+                  id="community-post"
+                  type="textarea"
                   placeholder="Share something with the community..."
                   value={newPost}
-                  onChange={(e) => setNewPost(e.target.value)}
+                  onChange={(val) => setNewPost(val)}
+                  rows={3}
                 />
                 <button type="submit" className="btn btn-primary btn-sm">Post</button>
               </form>

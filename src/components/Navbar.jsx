@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectUser, logout } from '../store/userSlice';
 import '../styles/navbar.css';
 
-function Navbar({ user, onLogout }) {
+function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+
 
   const handleLogout = () => {
-    onLogout();
+    dispatch(logout());
     setMenuOpen(false);
     navigate('/');
   };
@@ -32,6 +37,7 @@ function Navbar({ user, onLogout }) {
             <NavLink to="/assistant" onClick={() => setMenuOpen(false)}>Travel Assistant</NavLink>
             <NavLink to="/community" onClick={() => setMenuOpen(false)}>Community</NavLink>
             <NavLink to="/tips" onClick={() => setMenuOpen(false)}>Railway Tips</NavLink>
+            <NavLink to="/my-trips" onClick={() => setMenuOpen(false)}>My Trips</NavLink>
             {user && (
               <NavLink to="/my-bookings" onClick={() => setMenuOpen(false)}>My Bookings</NavLink>
             )}

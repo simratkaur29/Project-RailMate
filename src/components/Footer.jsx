@@ -18,7 +18,18 @@ function Footer() {
               <li><Link to="/trains">Search Trains</Link></li>
               <li><Link to="/stations">Station Guide</Link></li>
               <li><Link to="/assistant">Smart Assistant</Link></li>
+              <li><Link to="/my-trips">My Trips</Link></li>
               <li><Link to="/my-bookings">My Bookings</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4>Destinations</h4>
+            <ul>
+              <li><Link to="/destination/New Delhi">New Delhi</Link></li>
+              <li><Link to="/destination/Jaipur">Jaipur</Link></li>
+              <li><Link to="/destination/Mumbai">Mumbai</Link></li>
+              <li><Link to="/destination/Amritsar">Amritsar</Link></li>
             </ul>
           </div>
 
@@ -38,7 +49,7 @@ function Footer() {
               <li><span>📧 support@railmate.in</span></li>
               <li><span>📞 139 (Railway Helpline)</span></li>
               <li><span>📞 182 (RPF Helpline)</span></li>
-              <li><span>📍 New Delhi, India</span></li>
+              <li><span>📍 Mumbai, India</span></li>
             </ul>
           </div>
         </div>

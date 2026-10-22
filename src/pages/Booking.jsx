@@ -1,7 +1,11 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useRef } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/userSlice';
+import FormInput from '../components/FormInput';
 import '../styles/profile.css';
 
+HEAD
 // Realistic standard catering fares (per passenger)
 export const MEAL_PRICES = {
   breakfast: 120, // ₹120 per passenger
@@ -11,8 +15,12 @@ export const MEAL_PRICES = {
 export const GST_RATE = 0.05; // 5% GST on railway services and catering
 
 function Booking({ user }) {
+
+function Booking() {
+ main
   const location = useLocation();
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
   const train = location.state?.train;
 
   const [form, setForm] = useState({
@@ -30,23 +38,36 @@ function Booking({ user }) {
       lunch: false,
     },
   });
+ HEAD
+
+
+ main
   const [errors, setErrors] = useState({});
   const [confirmed, setConfirmed] = useState(false);
   const [bookingData, setBookingData] = useState(null);
+
+  // Focus management refs
+  const nameRef = useRef(null);
+  const dateRef = useRef(null);
+  const classRef = useRef(null);
 
   if (!train) {
     return (
       <main className="booking-page">
         <div className="page-header">
           <h1>🎫 Book Your Ticket</h1>
-          <p>Select a train first to proceed with booking</p>
+          <p>Select a train first to proceed with booking.</p>
         </div>
         <div className="container">
           <div className="empty-state">
             <div className="icon">🚆</div>
             <h3>No train selected</h3>
             <p>Please search for a train and click "Book Now" to proceed.</p>
-            <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => navigate('/trains')}>
+            <button
+              className="btn btn-primary"
+              style={{ marginTop: '1rem' }}
+              onClick={() => navigate('/trains')}
+            >
               Search Trains
             </button>
           </div>
@@ -66,6 +87,7 @@ function Booking({ user }) {
   const gstAmount = Math.round(subtotal * GST_RATE);
   const totalFare = subtotal + gstAmount;
 
+ HEAD
   const handleMealToggle = (mealType) => {
     setForm((prev) => ({
       ...prev,
@@ -89,6 +111,45 @@ function Booking({ user }) {
     setForm((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!form.passengerName.trim()) {
+      newErrors.passengerName = 'Passenger full name is required';
+    } else if (form.passengerName.trim().length < 3) {
+      newErrors.passengerName = 'Name must be at least 3 characters';
+    }
+
+    if (!form.date) {
+      newErrors.date = 'Journey date is required';
+    }
+
+    if (!form.travelClass) {
+      newErrors.travelClass = 'Please select a travel class';
+    }
+
+    return newErrors;
+  };
+
+  const handleConfirm = (e) => {
+    e.preventDefault();
+
+    // 1. Field-level validation
+    const validationErrors = validate();
+    setErrors(validationErrors);
+
+    // 2. Focus management with refs: focus the first invalid field
+    if (Object.keys(validationErrors).length > 0) {
+      if (validationErrors.passengerName) {
+        nameRef.current?.focus();
+      } else if (validationErrors.date) {
+        dateRef.current?.focus();
+      } else if (validationErrors.travelClass) {
+        classRef.current?.focus();
+      }
+      return;
+main
     }
   };
 
@@ -151,12 +212,13 @@ function Booking({ user }) {
   const handleProceedToPayment = (e) => {
     e.preventDefault();
 
+    // 3. Login requirement check with non-blocking feedback
     if (!user) {
-      alert('Please login to book tickets.');
-      navigate('/login');
+      setErrors({ auth: 'Please login or register to complete your ticket booking.' });
       return;
     }
 
+HEAD
     const validationErrors = validateForm();
     setErrors(validationErrors);
 
@@ -172,6 +234,11 @@ function Booking({ user }) {
     const cleanPhone = form.phone.trim().replace(/\D/g, '').slice(-10);
 
     const bookingOrder = {
+
+    // 4. Create confirmed booking
+    const booking = {
+      id: 'RM' + Date.now().toString().slice(-8),
+ main
       trainName: train.name,
       trainNumber: train.number,
       source: train.source,
@@ -183,10 +250,14 @@ function Booking({ user }) {
       journeyType: form.journeyType,
       journeyMultiplier,
       date: form.date,
+ HEAD
       returnDate: form.journeyType === 'roundTrip' ? form.returnDate : null,
       passengerName: form.passengerName.trim(),
       email: form.email.trim(),
       phone: cleanPhone,
+
+      passengerName: form.passengerName.trim(),
+main
       travelClass: form.travelClass,
       seatPreference: form.seatPreference,
       passengers: form.passengers,
@@ -204,6 +275,14 @@ function Booking({ user }) {
     navigate('/payment', { state: { bookingOrder } });
   };
 
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  // Confirmation view
   if (confirmed && bookingData) {
     return (
       <main className="booking-page">
@@ -215,10 +294,13 @@ function Booking({ user }) {
           <div className="confirmation-card card">
             <div className="check-icon">✅</div>
             <h2>Booking Successful!</h2>
-            <p style={{ color: 'var(--text-light)', marginBottom: '1rem' }}>Your train ticket has been booked. Have a safe journey!</p>
+            <p style={{ color: 'var(--text-light)', marginBottom: '1rem' }}>
+              Your train ticket has been booked. Have a safe journey!
+            </p>
             <div className="booking-id">Booking ID: {bookingData.id}</div>
 
             <div className="booking-summary" style={{ textAlign: 'left', marginTop: '1.5rem' }}>
+ HEAD
               <div className="summary-item"><label>Passenger</label><p>{bookingData.passengerName}</p></div>
               <div className="summary-item"><label>Contact</label><p>{bookingData.phone} | {bookingData.email}</p></div>
               <div className="summary-item"><label>Train</label><p>{bookingData.trainName}</p></div>
@@ -233,11 +315,49 @@ function Booking({ user }) {
               <div className="summary-item"><label>Meal Charges</label><p>₹{bookingData.mealFare || 0}</p></div>
               <div className="summary-item"><label>GST (5%)</label><p>₹{bookingData.gstAmount || 0}</p></div>
               <div className="summary-item"><label>Total Paid Fare</label><p style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem' }}>₹{bookingData.fare}</p></div>
+
+              <div className="summary-item">
+                <label>Passenger</label>
+                <p>{bookingData.passengerName}</p>
+              </div>
+              <div className="summary-item">
+                <label>Train</label>
+                <p>{bookingData.trainName}</p>
+              </div>
+              <div className="summary-item">
+                <label>Train Number</label>
+                <p>#{bookingData.trainNumber}</p>
+              </div>
+              <div className="summary-item">
+                <label>Journey Date</label>
+                <p>{bookingData.date}</p>
+              </div>
+              <div className="summary-item">
+                <label>Source</label>
+                <p>{bookingData.source}</p>
+              </div>
+              <div className="summary-item">
+                <label>Destination</label>
+                <p>{bookingData.destination}</p>
+              </div>
+              <div className="summary-item">
+                <label>Class</label>
+                <p>{bookingData.travelClass}</p>
+              </div>
+              <div className="summary-item">
+                <label>Total Fare</label>
+                <p>₹{bookingData.fare}</p>
+              </div>
+ main
             </div>
 
             <div style={{ marginTop: '2rem', display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button className="btn btn-primary" onClick={() => navigate('/my-bookings')}>View My Bookings</button>
-              <button className="btn btn-outline" onClick={() => navigate('/trains')}>Book Another</button>
+              <button className="btn btn-primary" onClick={() => navigate('/my-bookings')}>
+                View My Bookings
+              </button>
+              <button className="btn btn-outline" onClick={() => navigate('/trains')}>
+                Book Another
+              </button>
             </div>
           </div>
         </div>
@@ -245,6 +365,7 @@ function Booking({ user }) {
     );
   }
 
+  // Booking Form View
   return (
     <main className="booking-page">
       <div className="page-header">
@@ -253,7 +374,7 @@ function Booking({ user }) {
       </div>
 
       <div className="container booking-container">
-        {/* Train Info */}
+        {/* Train Info Card */}
         <div className="booking-card card">
           <h3>🚆 Train Information</h3>
           <div className="booking-summary">
@@ -268,6 +389,7 @@ function Booking({ user }) {
           </div>
         </div>
 
+HEAD
         {/* Booking Form with Validation */}
         <form onSubmit={handleProceedToPayment} noValidate>
           <div className="booking-card card">
@@ -449,11 +571,104 @@ function Booking({ user }) {
                   </option>
                 ))}
               </select>
+
+        {/* Authentication Notice Banner if not logged in */}
+        {errors.auth && (
+          <div
+            className="card"
+            style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              borderColor: 'var(--error, #ef4444)',
+              padding: '1rem 1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px',
+            }}
+          >
+            <div>
+              <strong style={{ color: 'var(--error, #ef4444)' }}>⚠️ Login Required</strong>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-light)', marginTop: '2px' }}>
+                {errors.auth}
+              </p>
             </div>
+            <Link to="/login" className="btn btn-primary btn-sm">
+              Login Now →
+            </Link>
+          </div>
+        )}
+
+        {/* Booking Form */}
+        <form onSubmit={handleConfirm} noValidate>
+          <div className="booking-card card">
+            <h3>👤 Passenger Details</h3>
+
+            <FormInput
+              ref={nameRef}
+              id="book-name"
+              label="Passenger Name"
+              type="text"
+              placeholder="e.g. Rahul Sharma"
+              value={form.passengerName}
+              onChange={(val) => handleChange('passengerName', val)}
+              error={errors.passengerName}
+              required
+            />
+
+            <FormInput
+              ref={dateRef}
+              id="book-date"
+              label="Journey Date"
+              type="date"
+              value={form.date}
+              onChange={(val) => handleChange('date', val)}
+              error={errors.date}
+              required
+            />
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <FormInput
+                ref={classRef}
+                id="book-class"
+                label="Travel Class"
+                value={form.travelClass}
+                onChange={(val) => handleChange('travelClass', val)}
+                error={errors.travelClass}
+                required
+                placeholder="Select Class"
+                options={train.classes.map((cls) => ({ value: cls, label: cls }))}
+              />
+
+              <FormInput
+                id="book-seat"
+                label="Berth / Seat Preference"
+                value={form.seatPreference}
+                onChange={(val) => handleChange('seatPreference', val)}
+                options={[
+                  { value: 'No Preference', label: 'No Preference' },
+                  { value: 'Lower Berth', label: 'Lower Berth' },
+                  { value: 'Upper Berth', label: 'Upper Berth' },
+                  { value: 'Window', label: 'Window' },
+                ]}
+              />
+main
+            </div>
+
+            <FormInput
+              id="book-count"
+              label="Number of Passengers"
+              value={form.passengers.toString()}
+              onChange={(val) => handleChange('passengers', parseInt(val) || 1)}
+              options={[1, 2, 3, 4, 5, 6].map((n) => ({
+                value: n.toString(),
+                label: `${n} Passenger${n > 1 ? 's' : ''}`,
+              }))}
+            />
           </div>
 
           {/* Food & Meal Options */}
           <div className="booking-card card">
+HEAD
             <h3>🍽️ Food & Catering Options</h3>
             <p style={{ color: 'var(--text-light)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
               Pre-book freshly prepared IRCTC catering meals. Choose breakfast, lunch, both, or neither. Meal charges are calculated per passenger.
@@ -587,34 +802,71 @@ function Booking({ user }) {
               </div>
             </div>
 
+
+            <h3>💰 Fare Summary & Payment</h3>
+            <div className="booking-summary">
+              <div className="summary-item">
+                <label>Base Fare</label>
+                <p>₹{train.price} × {form.passengers}</p>
+              </div>
+              <div className="summary-item">
+                <label>Class</label>
+                <p>{form.travelClass || 'Not selected'}</p>
+              </div>
+            </div>
+
+ main
             <div className="booking-total">
               <span className="total-label">Final Payable Total (Fare + Meals + GST)</span>
               <span className="total-amount">₹{totalFare}</span>
             </div>
 
+HEAD
+
+            {/* Payment Investigation Note: Requirements studied before real payment integration */}
+ main
             <div
               style={{
                 marginTop: '1.25rem',
                 padding: '12px 14px',
+ HEAD
                 borderRadius: 'var(--radius-sm)',
                 background: 'rgba(29, 112, 162, 0.06)',
                 border: '1px solid rgba(29, 112, 162, 0.2)',
+
+                borderRadius: '8px',
+                background: 'rgba(59, 130, 246, 0.08)',
+                border: '1px solid rgba(59, 130, 246, 0.25)',
+ main
                 fontSize: '0.84rem',
                 color: 'var(--text-light)',
               }}
             >
+HEAD
               <div style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: '3px' }}>
                 🔒 Step 1 of 2: Passenger Details Complete
               </div>
               Clicking below validates all required fields with strict format checks and takes you to the secure payment checkout page.
+
+              <div style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: '4px' }}>
+                💳 Payment Gateway Note (Simulated Demo Mode)
+              </div>
+              No real payments are deducted. Payment gateway requirements (webhook verification, tokenization & PCI-DSS compliance) have been investigated for future gateway integration.
+main
             </div>
 
             <button
               type="submit"
               className="btn btn-accent"
+HEAD
               style={{ width: '100%', marginTop: '1rem', padding: '14px', fontSize: '1.05rem', fontWeight: 700 }}
             >
               💳 Proceed to Payment (₹{totalFare}) ➔
+
+              style={{ width: '100%', marginTop: '1rem', padding: '14px', fontSize: '1rem' }}
+            >
+              ✅ Confirm & Book Ticket (₹{totalFare})
+main
             </button>
           </div>
         </form>

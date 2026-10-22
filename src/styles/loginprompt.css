@@ -1,0 +1,271 @@
+.lpm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 20px;
+}
+
+.lpm-fade-in {
+  animation: lpmFadeIn 0.3s ease forwards;
+}
+
+.lpm-fade-out {
+  animation: lpmFadeOut 0.25s ease forwards;
+}
+
+.lpm-scale-in {
+  animation: lpmScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.lpm-scale-out {
+  animation: lpmScaleOut 0.25s ease forwards;
+}
+
+@keyframes lpmFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lpmFadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes lpmScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes lpmScaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+}
+
+
+.lpm-modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+
+
+.lpm-accent-bar {
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+}
+
+.lpm-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition);
+  z-index: 1;
+}
+
+.lpm-close-btn:hover {
+  background: var(--background);
+  color: var(--text);
+}
+
+.lpm-close-btn:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+
+.lpm-content {
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+
+.lpm-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.lpm-heading {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.3px;
+}
+
+.lpm-brand {
+  letter-spacing: 1px;
+}
+
+.lpm-brand-accent {
+  color: var(--accent);
+}
+
+.lpm-subtitle {
+  font-size: 1.05rem;
+  color: var(--secondary);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.lpm-description {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.65;
+  max-width: 340px;
+  margin: 0 auto 1.75rem;
+}
+
+.lpm-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.lpm-btn-login,
+.lpm-btn-signup {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+
+.lpm-btn-login:focus-visible,
+.lpm-btn-signup:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.lpm-btn-later {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: color 0.2s;
+  font-family: inherit;
+}
+
+.lpm-btn-later:hover {
+  color: var(--text);
+}
+
+.lpm-btn-later:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+
+.lpm-decoration {
+  padding: 0 2rem 1.5rem;
+}
+
+.lpm-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  justify-content: center;
+}
+
+.lpm-track-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--border), var(--accent), var(--border), transparent);
+  max-width: 260px;
+}
+
+.lpm-track-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin: 0 -3px;
+  position: relative;
+  z-index: 1;
+}
+
+.lpm-track-dot:nth-child(2) {
+  width: 10px;
+  height: 10px;
+  margin: 0 8px;
+  background: var(--primary);
+  border: 2px solid var(--accent);
+}
+
+
+@media (max-width: 480px) {
+  .lpm-content {
+    padding: 2rem 1.25rem 1.25rem;
+  }
+
+  .lpm-heading {
+    font-size: 1.35rem;
+  }
+
+  .lpm-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .lpm-description {
+    font-size: 0.85rem;
+  }
+
+  .lpm-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .lpm-btn-login,
+  .lpm-btn-signup {
+    width: 100%;
+  }
+}
