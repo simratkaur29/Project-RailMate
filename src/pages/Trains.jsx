@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useJourney } from '../context/JourneyContext';
 import TrainCard from '../components/TrainCard';
 import trainsData from '../data/trains';
@@ -7,6 +7,7 @@ import '../styles/trains.css';
 
 function Trains() {
   const location = useLocation();
+  const navigate = useNavigate();
   const initialState = location.state || {};
   const { updateJourney } = useJourney();
 
@@ -35,11 +36,25 @@ function Trains() {
   const initialDateValid =
     initialState.date && initialState.date >= minDate ? initialState.date : '';
 
+  const initialReturnDateValid =
+    initialState.returnDate && initialState.returnDate >= (initialDateValid || minDate)
+      ? initialState.returnDate
+      : '';
+
+  const [tripType, setTripType] = useState(initialState.tripType || 'oneWay');
   const [source, setSource] = useState(initialState.source || '');
   const [destination, setDestination] = useState(initialState.destination || '');
   const [date, setDate] = useState(initialDateValid);
   const [dateError, setDateError] = useState('');
+  const [returnDate, setReturnDate] = useState(initialReturnDateValid);
+  const [returnDateError, setReturnDateError] = useState('');
+
+  // Results & Tabs state
   const [filteredTrains, setFilteredTrains] = useState([]);
+  const [returnTrains, setReturnTrains] = useState([]);
+  const [activeTab, setActiveTab] = useState('onward'); // 'onward' | 'return'
+  const [selectedOnwardTrain, setSelectedOnwardTrain] = useState(null);
+  const [selectedReturnTrain, setSelectedReturnTrain] = useState(null);
 
   // Async state: idle | loading | success | empty | error
   const [searchStatus, setSearchStatus] = useState('idle');
@@ -47,9 +62,10 @@ function Trains() {
   // Initial load
   useEffect(() => {
     if (initialState.source || initialState.destination) {
-      performSearch(initialState.source || '', initialState.destination || '');
+      performSearch(initialState.source || '', initialState.destination || '', tripType);
     } else {
       setFilteredTrains(trainsData);
+      setReturnTrains([]);
       setSearchStatus('success');
     }
   }, []);
@@ -85,7 +101,6 @@ function Trains() {
 
   // Station codes and common typo corrections
   const typoMap = {
-    // Typos
     mubai: 'mumbai',
     mumbay: 'mumbai',
     bombay: 'mumbai',
@@ -103,7 +118,6 @@ function Trains() {
     bengaluru: 'bangalore',
     channai: 'chennai',
     madras: 'chennai',
-    // Station codes
     ndls: 'new delhi',
     dli: 'new delhi',
     csmt: 'mumbai',
@@ -151,16 +165,18 @@ function Trains() {
     return false;
   };
 
-  const performSearch = (src, dest) => {
+  const performSearch = (src, dest, currentTripType = tripType) => {
     setSearchStatus('loading');
 
     const timer = setTimeout(() => {
       try {
-        let results = trainsData;
+        let onwardResults = trainsData;
+        let returnResults = trainsData;
 
+        // Onward Search
         if (src.trim()) {
           const normSrc = normalizeQuery(src);
-          results = results.filter(
+          onwardResults = onwardResults.filter(
             (t) =>
               matchesTerm(t.source, normSrc) ||
               (t.name && normalizeQuery(t.name).includes(normSrc))
@@ -169,22 +185,48 @@ function Trains() {
 
         if (dest.trim()) {
           const normDest = normalizeQuery(dest);
-          results = results.filter(
+          onwardResults = onwardResults.filter(
             (t) =>
               matchesTerm(t.destination, normDest) ||
               (t.name && normalizeQuery(t.name).includes(normDest))
           );
         }
 
-        setFilteredTrains(results);
+        // Return Search (source and destination inverted)
+        if (currentTripType === 'roundTrip') {
+          if (dest.trim()) {
+            const normDest = normalizeQuery(dest);
+            returnResults = returnResults.filter(
+              (t) =>
+                matchesTerm(t.source, normDest) ||
+                (t.name && normalizeQuery(t.name).includes(normDest))
+            );
+          }
 
-        if (results.length > 0) {
+          if (src.trim()) {
+            const normSrc = normalizeQuery(src);
+            returnResults = returnResults.filter(
+              (t) =>
+                matchesTerm(t.destination, normSrc) ||
+                (t.name && normalizeQuery(t.name).includes(normSrc))
+            );
+          }
+        } else {
+          returnResults = [];
+        }
+
+        setFilteredTrains(onwardResults);
+        setReturnTrains(returnResults);
+
+        if (onwardResults.length > 0 || (currentTripType === 'roundTrip' && returnResults.length > 0)) {
           setSearchStatus('success');
           if (dest.trim()) {
             updateJourney({
               source: src.trim(),
               destination: dest.trim(),
+              tripType: currentTripType,
               travelDate: date,
+              returnDate: currentTripType === 'roundTrip' ? returnDate : '',
             });
           }
         } else {
@@ -197,6 +239,8 @@ function Trains() {
 
     return () => clearTimeout(timer);
   };
+
+  const minReturnDate = date || minDate;
 
   const handleDateChange = (val) => {
     setDate(val);
@@ -211,6 +255,27 @@ function Trains() {
     } else {
       setDateError('');
     }
+
+    if (returnDate && val > returnDate) {
+      setReturnDateError('Return date cannot be earlier than the onward journey date.');
+    } else if (returnDate && val <= returnDate) {
+      setReturnDateError('');
+    }
+  };
+
+  const handleReturnDateChange = (val) => {
+    setReturnDate(val);
+    if (!val) {
+      setReturnDateError('');
+      return;
+    }
+    if (val < minReturnDate) {
+      setReturnDateError('Return date cannot be earlier than the onward journey date.');
+    } else if (val > maxDate) {
+      setReturnDateError('Return date cannot be more than 120 days in advance.');
+    } else {
+      setReturnDateError('');
+    }
   };
 
   const handleSearch = (e) => {
@@ -223,17 +288,52 @@ function Trains() {
       setDateError('Journey date cannot be more than 120 days in advance.');
       return;
     }
+    if (tripType === 'roundTrip') {
+      if (!returnDate) {
+        setReturnDateError('Please select a return journey date.');
+        return;
+      }
+      if (returnDate < minReturnDate) {
+        setReturnDateError('Return date cannot be earlier than the onward journey date.');
+        return;
+      }
+    }
     setDateError('');
-    performSearch(source, destination);
+    setReturnDateError('');
+    performSearch(source, destination, tripType);
   };
 
   const handleReset = () => {
+    setTripType('oneWay');
     setSource('');
     setDestination('');
     setDate('');
+    setReturnDate('');
     setDateError('');
+    setReturnDateError('');
+    setSelectedOnwardTrain(null);
+    setSelectedReturnTrain(null);
+    setActiveTab('onward');
     setFilteredTrains(trainsData);
+    setReturnTrains([]);
     setSearchStatus('success');
+  };
+
+  const handleProceedRoundTrip = () => {
+    if (!selectedOnwardTrain) {
+      alert('Please select an onward train first.');
+      setActiveTab('onward');
+      return;
+    }
+    navigate('/booking', {
+      state: {
+        train: selectedOnwardTrain,
+        returnTrain: selectedReturnTrain || null,
+        tripType: 'roundTrip',
+        date,
+        returnDate,
+      },
+    });
   };
 
   const popularStations = [
@@ -256,11 +356,41 @@ function Trains() {
 
       <div className="page-header">
         <h1>🔍 Search Trains</h1>
-        <p>Find the perfect train for your journey across India with live platform guidance.</p>
+        <p>Find the perfect train for your journey across India with return booking and platform guidance.</p>
       </div>
 
       <div className="container">
+        {/* Search Bar Form */}
         <form className="trains-search-bar" onSubmit={handleSearch}>
+          {/* Trip Type Selector */}
+          <div className="trip-type-selector-bar" style={{ width: '100%', marginBottom: '12px' }}>
+            <div style={{ display: 'inline-flex', gap: '8px', background: 'var(--background)', padding: '4px', borderRadius: '24px' }}>
+              <button
+                type="button"
+                className={`btn btn-sm ${tripType === 'oneWay' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ borderRadius: '20px', padding: '6px 20px', border: 'none' }}
+                onClick={() => {
+                  setTripType('oneWay');
+                  setReturnDateError('');
+                  if (source || destination) performSearch(source, destination, 'oneWay');
+                }}
+              >
+                ➡️ One Way
+              </button>
+              <button
+                type="button"
+                className={`btn btn-sm ${tripType === 'roundTrip' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ borderRadius: '20px', padding: '6px 20px', border: 'none' }}
+                onClick={() => {
+                  setTripType('roundTrip');
+                  if (source || destination) performSearch(source, destination, 'roundTrip');
+                }}
+              >
+                🔄 Round Trip
+              </button>
+            </div>
+          </div>
+
           <div className="form-group">
             <label htmlFor="search-source">From Station / City</label>
             <input
@@ -272,8 +402,9 @@ function Trains() {
               onChange={(e) => setSource(e.target.value)}
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="search-dest">To Station / City / State</label>
+            <label htmlFor="search-dest">To Station / City</label>
             <input
               id="search-dest"
               type="text"
@@ -283,8 +414,11 @@ function Trains() {
               onChange={(e) => setDestination(e.target.value)}
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="search-date">Journey Date</label>
+            <label htmlFor="search-date">
+              {tripType === 'roundTrip' ? 'Onward Journey Date' : 'Journey Date'}
+            </label>
             <input
               id="search-date"
               type="date"
@@ -311,18 +445,200 @@ function Trains() {
               </div>
             )}
           </div>
-          <button type="submit" className="btn btn-primary">🔍 Search</button>
-          <button type="button" className="btn btn-outline" onClick={handleReset}>Reset</button>
+
+          {/* Return Date Input for Round Trips */}
+          {tripType === 'roundTrip' && (
+            <div className="form-group">
+              <label htmlFor="search-return-date">Return Journey Date</label>
+              <input
+                id="search-return-date"
+                type="date"
+                value={returnDate}
+                min={minReturnDate}
+                max={maxDate}
+                onChange={(e) => handleReturnDateChange(e.target.value)}
+                aria-invalid={!!returnDateError}
+              />
+              {returnDateError && (
+                <div
+                  className="form-error"
+                  role="alert"
+                  style={{
+                    fontSize: '0.8rem',
+                    color: 'var(--error, #ef4444)',
+                    marginTop: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  <span>⚠️</span> {returnDateError}
+                </div>
+              )}
+            </div>
+          )}
+
+          <button type="submit" className="btn btn-primary">
+            🔍 {tripType === 'roundTrip' ? 'Search Round-Trip' : 'Search Trains'}
+          </button>
+          <button type="button" className="btn btn-outline" onClick={handleReset}>
+            Reset
+          </button>
         </form>
 
+        {/* Round Trip Selection Status Bar */}
+        {tripType === 'roundTrip' && (
+          <div
+            className="round-trip-banner card"
+            style={{
+              padding: '1rem 1.25rem',
+              marginBottom: '1.5rem',
+              background: 'rgba(18, 53, 91, 0.04)',
+              border: '1px solid rgba(18, 53, 91, 0.15)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '12px',
+            }}
+          >
+            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
+              <div>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
+                  1. Onward Train:
+                </span>
+                <div style={{ fontWeight: 600, color: selectedOnwardTrain ? 'var(--primary)' : 'var(--text-light)', fontSize: '0.92rem' }}>
+                  {selectedOnwardTrain ? (
+                    <span>🚆 {selectedOnwardTrain.name} (#{selectedOnwardTrain.number}) • ₹{selectedOnwardTrain.price}</span>
+                  ) : (
+                    <span style={{ fontStyle: 'italic' }}>Please select an onward train below</span>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
+                  2. Return Train:
+                </span>
+                <div style={{ fontWeight: 600, color: selectedReturnTrain ? 'var(--secondary)' : 'var(--text-light)', fontSize: '0.92rem' }}>
+                  {selectedReturnTrain ? (
+                    <span>🔄 {selectedReturnTrain.name} (#{selectedReturnTrain.number}) • ₹{selectedReturnTrain.price}</span>
+                  ) : (
+                    <span style={{ fontStyle: 'italic' }}>Select a return train or add on booking page</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-accent btn-sm"
+              style={{ padding: '8px 20px', fontWeight: 700 }}
+              onClick={handleProceedRoundTrip}
+              disabled={!selectedOnwardTrain}
+            >
+              {selectedOnwardTrain && selectedReturnTrain
+                ? `🎫 Book Both Journeys (₹${selectedOnwardTrain.price + selectedReturnTrain.price}) →`
+                : selectedOnwardTrain
+                ? '🎫 Proceed with Selected Onward →'
+                : 'Select Onward Train First'}
+            </button>
+          </div>
+        )}
+
+        {/* Tab Switcher for Round Trips */}
+        {tripType === 'roundTrip' && (
+          <div className="tab-nav" style={{ marginBottom: '1.25rem' }}>
+            <button
+              type="button"
+              className={`tab-btn ${activeTab === 'onward' ? 'active' : ''}`}
+              onClick={() => setActiveTab('onward')}
+            >
+              🚆 1. Onward Trains ({source || 'Origin'} → {destination || 'Destination'}) ({filteredTrains.length})
+              {selectedOnwardTrain && <span style={{ marginLeft: '6px', color: 'var(--success)' }}>✓</span>}
+            </button>
+            <button
+              type="button"
+              className={`tab-btn ${activeTab === 'return' ? 'active' : ''}`}
+              onClick={() => setActiveTab('return')}
+            >
+              🔄 2. Return Trains ({destination || 'Destination'} → {source || 'Origin'}) ({returnTrains.length})
+              {selectedReturnTrain && <span style={{ marginLeft: '6px', color: 'var(--success)' }}>✓</span>}
+            </button>
+          </div>
+        )}
+
+        {/* Results Counter */}
         <p className="train-result-count">
-          Showing <strong>{filteredTrains.length}</strong> train{filteredTrains.length !== 1 ? 's' : ''} across India
+          {tripType === 'roundTrip' ? (
+            activeTab === 'onward' ? (
+              <span>Showing <strong>{filteredTrains.length}</strong> onward train{filteredTrains.length !== 1 ? 's' : ''}</span>
+            ) : (
+              <span>Showing <strong>{returnTrains.length}</strong> return train{returnTrains.length !== 1 ? 's' : ''}</span>
+            )
+          ) : (
+            <span>Showing <strong>{filteredTrains.length}</strong> train{filteredTrains.length !== 1 ? 's' : ''} across India</span>
+          )}
         </p>
 
+        {/* Train Results List */}
         <div className="trains-results">
-          {filteredTrains.length > 0 ? (
+          {tripType === 'roundTrip' ? (
+            activeTab === 'onward' ? (
+              filteredTrains.length > 0 ? (
+                filteredTrains.map((train) => (
+                  <TrainCard
+                    key={train.id}
+                    train={train}
+                    selectedDate={date}
+                    isRoundTrip={true}
+                    returnDate={returnDate}
+                    returnTrain={selectedReturnTrain}
+                    isSelected={selectedOnwardTrain?.id === train.id}
+                    selectLabel="Select as Onward"
+                    onSelect={(t) => {
+                      setSelectedOnwardTrain(t);
+                      if (!selectedReturnTrain && returnTrains.length > 0) {
+                        setActiveTab('return');
+                      }
+                    }}
+                  />
+                ))
+              ) : (
+                <div className="empty-state">
+                  <div className="icon">🔍</div>
+                  <h3>No onward trains found</h3>
+                  <p>Try different source or destination stations across India.</p>
+                </div>
+              )
+            ) : returnTrains.length > 0 ? (
+              returnTrains.map((train) => (
+                <TrainCard
+                  key={train.id}
+                  train={train}
+                  selectedDate={returnDate}
+                  isRoundTrip={true}
+                  returnDate={returnDate}
+                  isSelected={selectedReturnTrain?.id === train.id}
+                  selectLabel="Select as Return"
+                  onSelect={(t) => setSelectedReturnTrain(t)}
+                />
+              ))
+            ) : (
+              <div className="empty-state">
+                <div className="icon">🔄</div>
+                <h3>No return trains found for this corridor</h3>
+                <p>Try searching for a major junction or proceed to booking to customize your return journey.</p>
+              </div>
+            )
+          ) : filteredTrains.length > 0 ? (
             filteredTrains.map((train) => (
-              <TrainCard key={train.id} train={train} selectedDate={date} />
+              <TrainCard
+                key={train.id}
+                train={train}
+                selectedDate={date}
+                isRoundTrip={false}
+              />
             ))
           ) : (
             <div className="empty-state">

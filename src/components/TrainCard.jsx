@@ -2,18 +2,41 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useJourney } from '../context/JourneyContext';
 
-function TrainCard({ train, onBook, selectedDate }) {
+function TrainCard({
+  train,
+  onBook,
+  selectedDate,
+  isSelected = false,
+  onSelect = null,
+  selectLabel = '',
+  isRoundTrip = false,
+  returnDate = '',
+  returnTrain = null,
+}) {
   const navigate = useNavigate();
   const { setSelectedTrain, journey } = useJourney();
   const [showDetails, setShowDetails] = useState(false);
 
   const handleBook = () => {
+    if (onSelect) {
+      onSelect(train);
+      return;
+    }
+
     if (onBook) {
       onBook(train);
     } else {
       setSelectedTrain(train);
       const effectiveDate = selectedDate || journey?.travelDate || '';
-      navigate('/booking', { state: { train, date: effectiveDate } });
+      navigate('/booking', {
+        state: {
+          train,
+          returnTrain: returnTrain || null,
+          tripType: isRoundTrip ? 'roundTrip' : 'oneWay',
+          date: effectiveDate,
+          returnDate: returnDate || journey?.returnDate || '',
+        },
+      });
     }
   };
 
@@ -39,7 +62,13 @@ function TrainCard({ train, onBook, selectedDate }) {
   const platformNum = train.departurePlatform || '1';
 
   return (
-    <div className="train-card card">
+    <div className={`train-card card ${isSelected ? 'selected-train-card' : ''}`}>
+      {isSelected && (
+        <div className="card-selected-banner">
+          ✓ Selected {selectLabel ? selectLabel.replace('Select ', '') : 'Train'}
+        </div>
+      )}
+
       <div className="train-card-main">
         <div className="train-card-media">
           <img
@@ -90,8 +119,11 @@ function TrainCard({ train, onBook, selectedDate }) {
           <div className="price-label">Starting From</div>
           <div className="price">₹{train.price}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 10 }}>
-            <button className="btn btn-accent btn-sm" onClick={handleBook}>
-              Book Now
+            <button
+              className={`btn btn-sm ${isSelected ? 'btn-success' : 'btn-accent'}`}
+              onClick={handleBook}
+            >
+              {isSelected ? '✓ Selected' : (selectLabel || 'Book Now')}
             </button>
             <button
               type="button"
