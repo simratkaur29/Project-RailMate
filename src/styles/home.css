@@ -1,4 +1,3 @@
-/* Hero Section */
 .hero {
   background: linear-gradient(135deg, var(--primary) 0%, #0d2847 50%, var(--secondary) 100%);
   color: white;
@@ -20,8 +19,15 @@
 }
 
 @keyframes heroGlow {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(30px, -20px); }
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(30px, -20px);
+  }
 }
 
 .hero-content {
@@ -48,16 +54,16 @@
   line-height: 1.7;
 }
 
-/* Search Form */
+
 .search-form-container {
   max-width: 800px;
   margin: 0 auto;
 }
 
 .search-form {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   display: flex;
@@ -73,14 +79,14 @@
 }
 
 .search-form .form-group label {
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.82rem;
   font-weight: 500;
   margin-bottom: 6px;
 }
 
 .search-form .form-group input {
-  background: rgba(255,255,255,0.95);
+  background: rgba(255, 255, 255, 0.95);
   border: none;
   padding: 12px 14px;
   border-radius: var(--radius-sm);
@@ -92,7 +98,7 @@
   height: fit-content;
 }
 
-/* Feature Cards */
+
 .features-section {
   padding: 4rem 0;
 }
@@ -126,7 +132,7 @@
   line-height: 1.5;
 }
 
-/* Featured Trains */
+
 .featured-section {
   padding: 3rem 0 4rem;
   background: white;
@@ -138,7 +144,7 @@
   gap: 20px;
 }
 
-/* Travel Tips Preview */
+
 .tips-preview {
   padding: 4rem 0;
 }
@@ -173,7 +179,7 @@
   line-height: 1.5;
 }
 
-/* Community Preview */
+
 .community-preview {
   padding: 3rem 0 4rem;
   background: white;

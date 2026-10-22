@@ -1,9 +1,8 @@
-/* ===== Destination Guide Page ===== */
 .destination-page {
   padding-bottom: 3rem;
 }
 
-/* Hero Section */
+
 .destination-hero {
   background: linear-gradient(135deg, var(--primary) 0%, #0d2847 50%, var(--secondary) 100%);
   color: white;
@@ -59,7 +58,7 @@
   line-height: 1.7;
 }
 
-/* Section Titles inside Destination */
+
 .dest-section {
   margin-bottom: 3rem;
 }
@@ -81,7 +80,7 @@
   color: var(--primary);
 }
 
-/* Category Filter Pills */
+
 .category-filters {
   display: flex;
   gap: 8px;
@@ -112,7 +111,7 @@
   color: white;
 }
 
-/* Attraction Cards Grid */
+
 .attractions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -178,7 +177,7 @@
   margin-top: 4px;
 }
 
-/* Food Cards */
+
 .food-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -222,7 +221,7 @@
   font-weight: 500;
 }
 
-/* Transport Cards */
+
 .transport-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -247,7 +246,7 @@
   line-height: 1.5;
 }
 
-/* Travel Tips List */
+
 .tips-list {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -277,7 +276,7 @@
   margin-top: 2px;
 }
 
-/* Itinerary Builder */
+
 .itinerary-builder {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -383,7 +382,7 @@
   line-height: 1.4;
 }
 
-/* Demo Disclaimer */
+
 .demo-disclaimer {
   background: rgba(244, 185, 66, 0.1);
   border: 1px solid rgba(244, 185, 66, 0.3);
@@ -402,7 +401,7 @@
   flex-shrink: 0;
 }
 
-/* Destination not found */
+
 .destination-not-found {
   text-align: center;
   padding: 4rem 1rem;
@@ -434,7 +433,7 @@
   margin-top: 1.5rem;
 }
 
-/* Quick Actions Row */
+
 .dest-actions {
   display: flex;
   gap: 12px;
@@ -442,7 +441,7 @@
   margin-bottom: 2rem;
 }
 
-/* Skeleton/Loading Cards */
+
 .skeleton-card {
   padding: 1.5rem;
   background: var(--surface);
@@ -474,11 +473,16 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .destination-hero {
     padding: 3rem 0 2rem;
