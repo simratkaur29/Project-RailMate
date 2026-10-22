@@ -2,7 +2,11 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const JourneyContext = createContext(null);
 
-// Shared option constants for booking forms
+export function useJourney() {
+  return useContext(JourneyContext);
+}
+
+
 export const BERTH_OPTIONS = [
   { value: 'No Preference', label: 'No Preference' },
   { value: 'Lower Berth', label: 'Lower Berth' },
@@ -19,157 +23,112 @@ export const GENDER_OPTIONS = [
   { value: 'Other', label: 'Other' },
 ];
 
-// Safely read and parse localStorage data
-function getStoredData(key, fallback) {
-  try {
-    const saved = localStorage.getItem(key);
-
-    if (saved === null) {
-      return fallback;
-    }
-
-    return JSON.parse(saved);
-  } catch (error) {
-    console.error(`Error reading ${key} from localStorage:`, error);
-    return fallback;
-  }
-}
-
-// Initial journey data
-const getInitialJourney = () => ({
-  source: '',
-  destination: '',
-  tripType: 'oneWay',
-  selectedTrain: null,
-  returnTrain: null,
-  travelDate: '',
-  returnDate: '',
-  arrivalTime: '',
-  travelPurpose: '',
-  interests: [],
-});
-
-export function useJourney() {
-  const context = useContext(JourneyContext);
-
-  if (context === null) {
-    throw new Error('useJourney must be used inside a JourneyProvider');
-  }
-
-  return context;
-}
-
 export function JourneyProvider({ children }) {
-  // Journey state
+
   const [journey, setJourney] = useState(() => {
-    const saved = getStoredData('railmate_journey', null);
-    return saved && typeof saved === 'object' && !Array.isArray(saved)
-      ? { ...getInitialJourney(), ...saved }
-      : getInitialJourney();
+    const saved = localStorage.getItem('railmate_journey');
+    return saved
+      ? JSON.parse(saved)
+      : {
+        source: '',
+        destination: '',
+        tripType: 'oneWay',
+        selectedTrain: null,
+        returnTrain: null,
+        travelDate: '',
+        returnDate: '',
+        arrivalTime: '',
+        travelPurpose: '',
+        interests: [],
+      };
   });
 
-  // Saved attractions
+
   const [savedAttractions, setSavedAttractions] = useState(() => {
-    const saved = getStoredData('railmate_saved_attractions', []);
-    return Array.isArray(saved) ? saved : [];
+    const saved = localStorage.getItem('railmate_saved_attractions');
+    return saved ? JSON.parse(saved) : [];
   });
 
-  // Travel checklist
+
   const [checklist, setChecklist] = useState(() => {
-    const saved = getStoredData('railmate_checklist', []);
-    return Array.isArray(saved) ? saved : [];
+    const saved = localStorage.getItem('railmate_checklist');
+    return saved ? JSON.parse(saved) : [];
   });
 
-  // Safely persist data to localStorage
-  const saveStoredData = (key, value) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error(`Error saving ${key} to localStorage:`, error);
-    }
-  };
 
   useEffect(() => {
-    saveStoredData('railmate_journey', journey);
+    localStorage.setItem('railmate_journey', JSON.stringify(journey));
   }, [journey]);
 
   useEffect(() => {
-    saveStoredData('railmate_saved_attractions', savedAttractions);
+    localStorage.setItem('railmate_saved_attractions', JSON.stringify(savedAttractions));
   }, [savedAttractions]);
 
   useEffect(() => {
-    saveStoredData('railmate_checklist', checklist);
+    localStorage.setItem('railmate_checklist', JSON.stringify(checklist));
   }, [checklist]);
 
-  // Update journey details
   const updateJourney = (data) => {
     setJourney((prev) => ({ ...prev, ...data }));
   };
 
-  // Select an outbound train
   const setSelectedTrain = (train) => {
     if (!train) {
-      updateJourney({
-        selectedTrain: null,
-        arrivalTime: '',
-      });
+      updateJourney({ selectedTrain: null });
       return;
     }
-
     updateJourney({
       selectedTrain: train,
-      source: train.source ?? '',
-      destination: train.destination ?? '',
-      arrivalTime: train.arrival ?? '',
+      source: train.source,
+      destination: train.destination,
+      arrivalTime: train.arrival || '',
     });
   };
 
-  // Select a return train
   const setReturnTrain = (train) => {
     updateJourney({ returnTrain: train || null });
   };
 
-  // Reset journey details
   const resetJourney = () => {
-    setJourney(getInitialJourney());
+    setJourney({
+      source: '',
+      destination: '',
+      tripType: 'oneWay',
+      selectedTrain: null,
+      returnTrain: null,
+      travelDate: '',
+      returnDate: '',
+      arrivalTime: '',
+      travelPurpose: '',
+      interests: [],
+    });
   };
 
-  // Attraction helpers
+
   const addAttraction = (attraction) => {
-    if (!attraction || !attraction.name) {
-      return;
-    }
-
     setSavedAttractions((prev) => {
-      if (prev.some((item) => item.name === attraction.name)) {
-        return prev;
-      }
-
+      if (prev.some((a) => a.name === attraction.name)) return prev;
       return [...prev, attraction];
     });
   };
 
   const removeAttraction = (attractionName) => {
-    setSavedAttractions((prev) =>
-      prev.filter((item) => item.name !== attractionName)
-    );
+    setSavedAttractions((prev) => prev.filter((a) => a.name !== attractionName));
   };
 
   const isAttractionSaved = (attractionName) => {
-    return savedAttractions.some((item) => item.name === attractionName);
+    return savedAttractions.some((a) => a.name === attractionName);
   };
 
-  // Checklist helpers
+
   const setFullChecklist = (items) => {
-    setChecklist(Array.isArray(items) ? items : []);
+    setChecklist(items);
   };
 
   const toggleChecklistItem = (itemId) => {
     setChecklist((prev) =>
       prev.map((item) =>
-        item.id === itemId
-          ? { ...item, checked: !item.checked }
-          : item
+        item.id === itemId ? { ...item, checked: !item.checked } : item
       )
     );
   };
