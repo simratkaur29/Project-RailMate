@@ -66,6 +66,7 @@ function MyBookings() {
                   <div className="detail"><label>Date</label><p>{booking.date}</p></div>
                   <div className="detail"><label>Passenger</label><p>{booking.passengerName}</p></div>
                   <div className="detail"><label>Class</label><p>{booking.travelClass}</p></div>
+                  <div className="detail"><label>Platform</label><p>PF {booking.departurePlatform || '1'} (Sample)</p></div>
                   <div className="detail"><label>Fare</label><p>₹{booking.fare}</p></div>
                 </div>
 

@@ -10,9 +10,35 @@ function Trains() {
   const initialState = location.state || {};
   const { updateJourney } = useJourney();
 
+  // Date helper utilities
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const getMaxDate = (daysAhead = 120) => {
+    const max = new Date();
+    max.setDate(max.getDate() + daysAhead);
+    const year = max.getFullYear();
+    const month = String(max.getMonth() + 1).padStart(2, '0');
+    const day = String(max.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const minDate = getTodayDate();
+  const maxDate = getMaxDate(120);
+
+  // Validate initial date if received from navigation state
+  const initialDateValid =
+    initialState.date && initialState.date >= minDate ? initialState.date : '';
+
   const [source, setSource] = useState(initialState.source || '');
   const [destination, setDestination] = useState(initialState.destination || '');
-  const [date, setDate] = useState(initialState.date || '');
+  const [date, setDate] = useState(initialDateValid);
+  const [dateError, setDateError] = useState('');
   const [filteredTrains, setFilteredTrains] = useState([]);
 
   // Async state: idle | loading | success | empty | error
@@ -28,28 +54,38 @@ function Trains() {
     }
   }, []);
 
-  // Map states & regions to their key cities and variations
+  // Map states, regions & codes across India to their cities
   const stateAliases = {
     punjab: ['amritsar', 'chandigarh', 'ludhiana', 'jalandhar', 'firozpur', 'punjab'],
     maharashtra: ['mumbai', 'pune', 'nagpur', 'csmt', 'bombay'],
     rajasthan: ['jaipur', 'udaipur', 'jodhpur', 'ajmer'],
     delhi: ['new delhi', 'delhi', 'ndls', 'dli', 'hazrat nizamuddin'],
-    up: ['varanasi', 'agra', 'lucknow', 'kanpur', 'prayagraj', 'banaras', 'kashi'],
-    'uttar pradesh': ['varanasi', 'agra', 'lucknow', 'kanpur', 'prayagraj', 'banaras', 'kashi'],
+    up: ['varanasi', 'agra', 'lucknow', 'kanpur', 'prayagraj', 'banaras', 'kashi', 'gorakhpur'],
+    'uttar pradesh': ['varanasi', 'agra', 'lucknow', 'kanpur', 'prayagraj', 'banaras', 'kashi', 'gorakhpur'],
     karnataka: ['bangalore', 'bengaluru', 'mysore'],
-    'tamil nadu': ['chennai', 'madras', 'coimbatore'],
+    'tamil nadu': ['chennai', 'madras', 'coimbatore', 'madurai'],
     telangana: ['hyderabad', 'secunderabad'],
-    bengal: ['kolkata', 'howrah', 'calcutta'],
-    'west bengal': ['kolkata', 'howrah', 'calcutta'],
-    bihar: ['patna'],
+    bengal: ['kolkata', 'howrah', 'sealdah', 'calcutta'],
+    'west bengal': ['kolkata', 'howrah', 'sealdah', 'calcutta'],
+    bihar: ['patna', 'gaya'],
     goa: ['goa', 'madgaon', 'vasco'],
     kashmir: ['kashmir', 'srinagar', 'jammu', 'katra'],
     himachal: ['shimla', 'kalka', 'manali'],
     gujarat: ['ahmedabad', 'surat', 'vadodara'],
-    kerala: ['kochi', 'cochin', 'thiruvananthapuram', 'trivandrum'],
+    kerala: ['kochi', 'cochin', 'thiruvananthapuram', 'trivandrum', 'ernakulam'],
+    'madhya pradesh': ['bhopal', 'indore', 'gwalior', 'jabalpur'],
+    mp: ['bhopal', 'indore', 'gwalior', 'jabalpur'],
+    assam: ['guwahati', 'dibrugarh', 'silchar'],
+    odisha: ['bhubaneswar', 'puri', 'cuttack'],
+    'andhra pradesh': ['visakhapatnam', 'vijayawada', 'tirupati'],
+    ap: ['visakhapatnam', 'vijayawada', 'tirupati'],
+    jharkhand: ['ranchi', 'jamshedpur', 'dhanbad'],
+    uttarakhand: ['dehradun', 'haridwar', 'rishikesh'],
   };
 
+  // Station codes and common typo corrections
   const typoMap = {
+    // Typos
     mubai: 'mumbai',
     mumbay: 'mumbai',
     bombay: 'mumbai',
@@ -67,6 +103,32 @@ function Trains() {
     bengaluru: 'bangalore',
     channai: 'chennai',
     madras: 'chennai',
+    // Station codes
+    ndls: 'new delhi',
+    dli: 'new delhi',
+    csmt: 'mumbai',
+    mmct: 'mumbai',
+    hwh: 'kolkata',
+    sdah: 'kolkata',
+    mas: 'chennai',
+    sbc: 'bangalore',
+    sc: 'hyderabad',
+    adi: 'ahmedabad',
+    lko: 'lucknow',
+    bsb: 'varanasi',
+    pnbe: 'patna',
+    bpl: 'bhopal',
+    bbs: 'bhubaneswar',
+    ghy: 'guwahati',
+    asr: 'amritsar',
+    cdg: 'chandigarh',
+    ldh: 'ludhiana',
+    fzr: 'firozpur',
+    ddn: 'dehradun',
+    jat: 'kashmir',
+    ers: 'kochi',
+    udz: 'udaipur',
+    agc: 'agra',
   };
 
   const normalizeQuery = (text) => {
@@ -84,6 +146,7 @@ function Trains() {
 
     for (const [state, cities] of Object.entries(stateAliases)) {
       if (cities.includes(q) && target.includes(state)) return true;
+      if (cities.includes(q) && cities.some((c) => target.includes(c))) return true;
     }
     return false;
   };
@@ -130,13 +193,37 @@ function Trains() {
       } catch {
         setSearchStatus('error');
       }
-    }, 400);
+    }, 300);
 
     return () => clearTimeout(timer);
   };
 
+  const handleDateChange = (val) => {
+    setDate(val);
+    if (!val) {
+      setDateError('');
+      return;
+    }
+    if (val < minDate) {
+      setDateError('Journey date cannot be in the past. Please select today or a future date.');
+    } else if (val > maxDate) {
+      setDateError('Journey date cannot be more than 120 days in advance.');
+    } else {
+      setDateError('');
+    }
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
+    if (date && date < minDate) {
+      setDateError('Journey date cannot be in the past. Please select today or a future date.');
+      return;
+    }
+    if (date && date > maxDate) {
+      setDateError('Journey date cannot be more than 120 days in advance.');
+      return;
+    }
+    setDateError('');
     performSearch(source, destination);
   };
 
@@ -144,19 +231,19 @@ function Trains() {
     setSource('');
     setDestination('');
     setDate('');
+    setDateError('');
     setFilteredTrains(trainsData);
     setSearchStatus('success');
   };
 
-  const handleRetry = () => {
-    performSearch(source, destination);
-  };
-
   const popularStations = [
-    'New Delhi', 'Mumbai', 'Punjab', 'Amritsar', 'Chandigarh',
-    'Agra', 'Goa', 'Jaipur', 'Varanasi', 'Kolkata',
-    'Bangalore', 'Chennai', 'Hyderabad', 'Pune', 'Kashmir',
-    'Shimla', 'Kochi', 'Udaipur', 'Ahmedabad', 'Patna'
+    'New Delhi', 'Mumbai', 'Kolkata', 'Chennai', 'Bangalore',
+    'Hyderabad', 'Ahmedabad', 'Pune', 'Jaipur', 'Lucknow',
+    'Varanasi', 'Patna', 'Bhopal', 'Bhubaneswar', 'Guwahati',
+    'Amritsar', 'Chandigarh', 'Ludhiana', 'Agra', 'Goa',
+    'Kochi', 'Nagpur', 'Visakhapatnam', 'Kanpur', 'Prayagraj',
+    'Surat', 'Coimbatore', 'Thiruvananthapuram', 'Ranchi', 'Dehradun',
+    'Shimla', 'Kashmir', 'Udaipur', 'Firozpur'
   ];
 
   return (
@@ -169,7 +256,7 @@ function Trains() {
 
       <div className="page-header">
         <h1>🔍 Search Trains</h1>
-        <p>Find the perfect train for your journey across India.</p>
+        <p>Find the perfect train for your journey across India with live platform guidance.</p>
       </div>
 
       <div className="container">
@@ -180,18 +267,18 @@ function Trains() {
               id="search-source"
               type="text"
               list="stations-list"
-              placeholder="e.g. Mumbai"
+              placeholder="e.g. New Delhi or NDLS"
               value={source}
               onChange={(e) => setSource(e.target.value)}
             />
           </div>
           <div className="form-group">
-            <label htmlFor="search-dest">To Station / State</label>
+            <label htmlFor="search-dest">To Station / City / State</label>
             <input
               id="search-dest"
               type="text"
               list="stations-list"
-              placeholder="e.g. Punjab"
+              placeholder="e.g. Kolkata, Chennai, Mumbai..."
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
             />
@@ -202,27 +289,54 @@ function Trains() {
               id="search-date"
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              min={minDate}
+              max={maxDate}
+              onChange={(e) => handleDateChange(e.target.value)}
+              aria-invalid={!!dateError}
             />
+            {dateError && (
+              <div
+                className="form-error"
+                role="alert"
+                style={{
+                  fontSize: '0.8rem',
+                  color: 'var(--error, #ef4444)',
+                  marginTop: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                <span>⚠️</span> {dateError}
+              </div>
+            )}
           </div>
           <button type="submit" className="btn btn-primary">🔍 Search</button>
           <button type="button" className="btn btn-outline" onClick={handleReset}>Reset</button>
         </form>
 
         <p className="train-result-count">
-          Showing <strong>{filteredTrains.length}</strong> train{filteredTrains.length !== 1 ? 's' : ''}
+          Showing <strong>{filteredTrains.length}</strong> train{filteredTrains.length !== 1 ? 's' : ''} across India
         </p>
 
         <div className="trains-results">
           {filteredTrains.length > 0 ? (
             filteredTrains.map((train) => (
-              <TrainCard key={train.id} train={train} />
+              <TrainCard key={train.id} train={train} selectedDate={date} />
             ))
           ) : (
             <div className="empty-state">
               <div className="icon">🔍</div>
               <h3>No trains found</h3>
-              <p>Try changing your search criteria or reset filters.</p>
+              <p>Try searching by station name, city, state, or railway code (e.g., NDLS, HWH, CSMT, MAS).</p>
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ marginTop: '1rem' }}
+                onClick={handleReset}
+              >
+                Show All Trains
+              </button>
             </div>
           )}
         </div>

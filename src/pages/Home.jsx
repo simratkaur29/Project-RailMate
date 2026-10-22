@@ -12,9 +12,55 @@ function Home() {
   const [source, setSource] = useState('');
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState('');
+  const [dateError, setDateError] = useState('');
+
+  // Date helper utilities
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const getMaxDate = (daysAhead = 120) => {
+    const max = new Date();
+    max.setDate(max.getDate() + daysAhead);
+    const year = max.getFullYear();
+    const month = String(max.getMonth() + 1).padStart(2, '0');
+    const day = String(max.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const minDate = getTodayDate();
+  const maxDate = getMaxDate(120);
+
+  const handleDateChange = (val) => {
+    setDate(val);
+    if (!val) {
+      setDateError('');
+      return;
+    }
+    if (val < minDate) {
+      setDateError('Journey date cannot be in the past. Please select today or a future date.');
+    } else if (val > maxDate) {
+      setDateError('Journey date cannot be more than 120 days in advance.');
+    } else {
+      setDateError('');
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
+    if (date && date < minDate) {
+      setDateError('Journey date cannot be in the past. Please select today or a future date.');
+      return;
+    }
+    if (date && date > maxDate) {
+      setDateError('Journey date cannot be more than 120 days in advance.');
+      return;
+    }
+    setDateError('');
     navigate('/trains', { state: { source, destination, date } });
   };
 
@@ -22,17 +68,27 @@ function Home() {
   const previewTips = tips.beforeJourney.slice(0, 4);
   const previewReviews = reviewsData.slice(0, 3);
 
+  const nationwideStations = [
+    'New Delhi', 'Mumbai', 'Kolkata', 'Chennai', 'Bangalore',
+    'Hyderabad', 'Ahmedabad', 'Pune', 'Jaipur', 'Lucknow',
+    'Varanasi', 'Patna', 'Bhopal', 'Bhubaneswar', 'Guwahati',
+    'Amritsar', 'Chandigarh', 'Ludhiana', 'Agra', 'Goa',
+    'Kochi', 'Nagpur', 'Visakhapatnam', 'Kanpur', 'Prayagraj',
+    'Surat', 'Coimbatore', 'Thiruvananthapuram', 'Ranchi', 'Dehradun',
+    'Shimla', 'Kashmir', 'Udaipur', 'Firozpur'
+  ];
+
   return (
     <main>
       { }
       <section className="hero">
         <div className="container hero-content">
           <h1>Your Smart <span className="accent">Railway</span> Travel Companion</h1>
-          <p>Search trains, explore stations, get travel tips, and plan your perfect railway journey with RAILMATE.</p>
+          <p>Search trains across India, check departure platforms, explore stations, and plan your journey with RAILMATE.</p>
 
           <div className="search-form-container">
             <datalist id="home-stations-list">
-              {['New Delhi', 'Mumbai', 'Punjab', 'Amritsar', 'Chandigarh', 'Agra', 'Goa', 'Jaipur', 'Varanasi', 'Kolkata', 'Bangalore', 'Chennai', 'Hyderabad', 'Pune', 'Kashmir', 'Shimla', 'Kochi', 'Udaipur', 'Ahmedabad', 'Patna'].map((st) => (
+              {nationwideStations.map((st) => (
                 <option key={st} value={st} />
               ))}
             </datalist>
@@ -44,18 +100,18 @@ function Home() {
                   id="hero-source"
                   type="text"
                   list="home-stations-list"
-                  placeholder="e.g. Mumbai"
+                  placeholder="e.g. New Delhi"
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="hero-dest">To Station / State</label>
+                <label htmlFor="hero-dest">To Station / City</label>
                 <input
                   id="hero-dest"
                   type="text"
                   list="home-stations-list"
-                  placeholder="e.g. Punjab"
+                  placeholder="e.g. Varanasi, Kolkata, Chennai..."
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
                 />
@@ -66,8 +122,27 @@ function Home() {
                   id="hero-date"
                   type="date"
                   value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  min={minDate}
+                  max={maxDate}
+                  onChange={(e) => handleDateChange(e.target.value)}
+                  aria-invalid={!!dateError}
                 />
+                {dateError && (
+                  <div
+                    className="form-error"
+                    role="alert"
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'var(--error, #ef4444)',
+                      marginTop: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span>⚠️</span> {dateError}
+                  </div>
+                )}
               </div>
               <button type="submit" className="btn btn-accent">🔍 Search Trains</button>
             </form>

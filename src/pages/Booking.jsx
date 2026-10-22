@@ -11,9 +11,33 @@ function Booking() {
   const user = useSelector(selectUser);
   const train = location.state?.train;
 
+  // Date helper utilities
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const getMaxDate = (daysAhead = 120) => {
+    const max = new Date();
+    max.setDate(max.getDate() + daysAhead);
+    const year = max.getFullYear();
+    const month = String(max.getMonth() + 1).padStart(2, '0');
+    const day = String(max.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const minDate = getTodayDate();
+  const maxDate = getMaxDate(120);
+
+  const initialDate =
+    location.state?.date && location.state.date >= minDate ? location.state.date : '';
+
   const [form, setForm] = useState({
     passengerName: user?.name || '',
-    date: '',
+    date: initialDate,
     travelClass: '',
     seatPreference: 'No Preference',
     passengers: 1,
@@ -66,6 +90,10 @@ function Booking() {
 
     if (!form.date) {
       newErrors.date = 'Journey date is required';
+    } else if (form.date < minDate) {
+      newErrors.date = 'Journey date cannot be in the past. Please select today or a future date.';
+    } else if (form.date > maxDate) {
+      newErrors.date = 'Journey date cannot be more than 120 days in advance.';
     }
 
     if (!form.travelClass) {
@@ -107,6 +135,7 @@ function Booking() {
       trainNumber: train.number,
       source: train.source,
       destination: train.destination,
+      departurePlatform: train.departurePlatform || '1',
       date: form.date,
       passengerName: form.passengerName.trim(),
       travelClass: form.travelClass,
@@ -176,6 +205,10 @@ function Booking() {
                 <p>{bookingData.destination}</p>
               </div>
               <div className="summary-item">
+                <label>Departure Platform</label>
+                <p>Platform {bookingData.departurePlatform || train.departurePlatform || '1'} (Sample Data)</p>
+              </div>
+              <div className="summary-item">
                 <label>Class</label>
                 <p>{bookingData.travelClass}</p>
               </div>
@@ -216,6 +249,13 @@ function Booking() {
             <div className="summary-item"><label>Number</label><p>#{train.number}</p></div>
             <div className="summary-item"><label>Source</label><p>{train.source}</p></div>
             <div className="summary-item"><label>Destination</label><p>{train.destination}</p></div>
+            <div className="summary-item">
+              <label>Departure Platform</label>
+              <p>
+                Platform {train.departurePlatform || '1'}{' '}
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>(Sample Data)</span>
+              </p>
+            </div>
             <div className="summary-item"><label>Departure</label><p>{train.departure}</p></div>
             <div className="summary-item"><label>Arrival</label><p>{train.arrival}</p></div>
             <div className="summary-item"><label>Duration</label><p>{train.duration}</p></div>
@@ -272,6 +312,8 @@ function Booking() {
               label="Journey Date"
               type="date"
               value={form.date}
+              min={minDate}
+              max={maxDate}
               onChange={(val) => handleChange('date', val)}
               error={errors.date}
               required

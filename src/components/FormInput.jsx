@@ -16,6 +16,7 @@ const FormInput = forwardRef(function FormInput(
     required = false,
     options = null, // array of { value, label } for select inputs
     min,
+    max,
     rows = 3,
     disabled = false,
   },
@@ -72,6 +73,7 @@ const FormInput = forwardRef(function FormInput(
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           min={min}
+          max={max}
           disabled={disabled}
           aria-invalid={!!error}
           aria-describedby={error ? `${inputId}-error` : undefined}
