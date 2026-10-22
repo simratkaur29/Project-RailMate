@@ -79,6 +79,7 @@ function MyBookings() {
                   </div>
                   <div className="detail"><label>Passenger</label><p>{booking.passengerName}</p></div>
                   <div className="detail"><label>Class</label><p>{booking.travelClass}</p></div>
+ HEAD
                   {booking.baseFare && (
                     <div className="detail"><label>Base Fare</label><p>₹{booking.baseFare}</p></div>
                   )}
@@ -98,6 +99,10 @@ function MyBookings() {
                     <div className="detail"><label>GST (5%)</label><p style={{ color: 'var(--secondary)' }}>+ ₹{booking.gstAmount}</p></div>
                   ) : null}
                   <div className="detail"><label>Total Paid</label><p style={{ fontWeight: 700, color: 'var(--primary)' }}>₹{booking.fare}</p></div>
+
+                  <div className="detail"><label>Platform</label><p>PF {booking.departurePlatform || '1'} (Sample)</p></div>
+                  <div className="detail"><label>Fare</label><p>₹{booking.fare}</p></div>
+ member2-trains
                 </div>
 
                 <div className="booking-item-footer">
