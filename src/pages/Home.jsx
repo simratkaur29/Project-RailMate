@@ -9,10 +9,13 @@ import '../styles/home.css';
 
 function Home() {
   const navigate = useNavigate();
+  const [tripType, setTripType] = useState('oneWay');
   const [source, setSource] = useState('');
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState('');
   const [dateError, setDateError] = useState('');
+  const [returnDate, setReturnDate] = useState('');
+  const [returnDateError, setReturnDateError] = useState('');
 
   // Date helper utilities
   const getTodayDate = () => {
@@ -34,6 +37,7 @@ function Home() {
 
   const minDate = getTodayDate();
   const maxDate = getMaxDate(120);
+  const minReturnDate = date || minDate;
 
   const handleDateChange = (val) => {
     setDate(val);
@@ -48,6 +52,27 @@ function Home() {
     } else {
       setDateError('');
     }
+
+    if (returnDate && val > returnDate) {
+      setReturnDateError('Return date cannot be earlier than the onward journey date.');
+    } else if (returnDate && val <= returnDate) {
+      setReturnDateError('');
+    }
+  };
+
+  const handleReturnDateChange = (val) => {
+    setReturnDate(val);
+    if (!val) {
+      setReturnDateError('');
+      return;
+    }
+    if (val < minReturnDate) {
+      setReturnDateError('Return date cannot be earlier than the onward journey date.');
+    } else if (val > maxDate) {
+      setReturnDateError('Return date cannot be more than 120 days in advance.');
+    } else {
+      setReturnDateError('');
+    }
   };
 
   const handleSearch = (e) => {
@@ -60,8 +85,27 @@ function Home() {
       setDateError('Journey date cannot be more than 120 days in advance.');
       return;
     }
+    if (tripType === 'roundTrip') {
+      if (!returnDate) {
+        setReturnDateError('Please select a return journey date.');
+        return;
+      }
+      if (returnDate < minReturnDate) {
+        setReturnDateError('Return date cannot be earlier than the onward journey date.');
+        return;
+      }
+    }
     setDateError('');
-    navigate('/trains', { state: { source, destination, date } });
+    setReturnDateError('');
+    navigate('/trains', {
+      state: {
+        source,
+        destination,
+        date,
+        returnDate: tripType === 'roundTrip' ? returnDate : '',
+        tripType,
+      },
+    });
   };
 
   const featuredTrains = trains.slice(0, 3);
@@ -84,9 +128,32 @@ function Home() {
       <section className="hero">
         <div className="container hero-content">
           <h1>Your Smart <span className="accent">Railway</span> Travel Companion</h1>
-          <p>Search trains across India, check departure platforms, explore stations, and plan your journey with RAILMATE.</p>
+          <p>Search trains across India, book one-way or round-trip journeys with platform details, explore stations, and plan your journey with RAILMATE.</p>
 
           <div className="search-form-container">
+            {/* Trip Type Selector */}
+            <div className="trip-type-selector" style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+              <button
+                type="button"
+                className={`btn btn-sm ${tripType === 'oneWay' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ borderRadius: '20px', padding: '6px 18px' }}
+                onClick={() => {
+                  setTripType('oneWay');
+                  setReturnDateError('');
+                }}
+              >
+                ➡️ One Way
+              </button>
+              <button
+                type="button"
+                className={`btn btn-sm ${tripType === 'roundTrip' ? 'btn-primary' : 'btn-outline'}`}
+                style={{ borderRadius: '20px', padding: '6px 18px' }}
+                onClick={() => setTripType('roundTrip')}
+              >
+                🔄 Round Trip
+              </button>
+            </div>
+
             <datalist id="home-stations-list">
               {nationwideStations.map((st) => (
                 <option key={st} value={st} />
@@ -117,7 +184,9 @@ function Home() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="hero-date">Journey Date</label>
+                <label htmlFor="hero-date">
+                  {tripType === 'roundTrip' ? 'Onward Journey Date' : 'Journey Date'}
+                </label>
                 <input
                   id="hero-date"
                   type="date"
@@ -144,7 +213,42 @@ function Home() {
                   </div>
                 )}
               </div>
-              <button type="submit" className="btn btn-accent">🔍 Search Trains</button>
+
+              {/* Return Date Input for Round Trips */}
+              {tripType === 'roundTrip' && (
+                <div className="form-group">
+                  <label htmlFor="hero-return-date">Return Journey Date</label>
+                  <input
+                    id="hero-return-date"
+                    type="date"
+                    value={returnDate}
+                    min={minReturnDate}
+                    max={maxDate}
+                    onChange={(e) => handleReturnDateChange(e.target.value)}
+                    aria-invalid={!!returnDateError}
+                  />
+                  {returnDateError && (
+                    <div
+                      className="form-error"
+                      role="alert"
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'var(--error, #ef4444)',
+                        marginTop: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <span>⚠️</span> {returnDateError}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <button type="submit" className="btn btn-accent">
+                🔍 {tripType === 'roundTrip' ? 'Search Round-Trip Trains' : 'Search Trains'}
+              </button>
             </form>
           </div>
         </div>

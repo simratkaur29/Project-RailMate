@@ -7,8 +7,24 @@ const JourneyContext = createContext(null);
  * Wraps the application to share journey data across Train Search, Destination Guide,
  * Travel Assistant, and My Trips pages.
  */
+export const BERTH_OPTIONS = [
+  { value: 'No Preference', label: 'No Preference' },
+  { value: 'Lower Berth', label: 'Lower Berth' },
+  { value: 'Middle Berth', label: 'Middle Berth' },
+  { value: 'Upper Berth', label: 'Upper Berth' },
+  { value: 'Side Lower', label: 'Side Lower' },
+  { value: 'Side Upper', label: 'Side Upper' },
+  { value: 'Window', label: 'Window Seat' },
+];
+
+export const GENDER_OPTIONS = [
+  { value: 'Male', label: 'Male' },
+  { value: 'Female', label: 'Female' },
+  { value: 'Other', label: 'Other' },
+];
+
 export function JourneyProvider({ children }) {
-  // ---- Journey state (selected source, destination, train, etc.) ----
+  // ---- Journey state (selected source, destination, train, return train, etc.) ----
   const [journey, setJourney] = useState(() => {
     const saved = localStorage.getItem('railmate_journey');
     return saved
@@ -16,8 +32,11 @@ export function JourneyProvider({ children }) {
       : {
           source: '',
           destination: '',
+          tripType: 'oneWay',
           selectedTrain: null,
+          returnTrain: null,
           travelDate: '',
+          returnDate: '',
           arrivalTime: '',
           travelPurpose: '',
           interests: [],
@@ -73,12 +92,19 @@ export function JourneyProvider({ children }) {
     });
   };
 
+  const setReturnTrain = (train) => {
+    updateJourney({ returnTrain: train || null });
+  };
+
   const clearJourney = () => {
     setJourney({
       source: '',
       destination: '',
+      tripType: 'oneWay',
       selectedTrain: null,
+      returnTrain: null,
       travelDate: '',
+      returnDate: '',
       arrivalTime: '',
       travelPurpose: '',
       interests: [],
@@ -131,6 +157,7 @@ export function JourneyProvider({ children }) {
     journey,
     updateJourney,
     setSelectedTrain,
+    setReturnTrain,
     clearJourney,
     savedAttractions,
     addAttraction,
