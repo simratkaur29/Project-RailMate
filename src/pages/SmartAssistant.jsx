@@ -111,20 +111,16 @@ const interestList = [
   'Family-Friendly',
 ];
 
-/**
- * SmartAssistant — Enhanced Travel Assistant with destination-aware recommendations.
- * Preserves the original general travel advice categories and adds a personalized
- * travel plan generator based on destination, purpose, and interests.
- */
+
 function SmartAssistant() {
   const navigate = useNavigate();
   const { journey, updateJourney, setFullChecklist } = useJourney();
 
-  // ---- Mode: general tips vs destination-aware plan ----
+
   const [mode, setMode] = useState('general');
   const [selectedCategory, setSelectedCategory] = useState('bestTime');
 
-  // ---- Destination form state (local) ----
+
   const [formData, setFormData] = useState({
     destination: journey.destination || '',
     travelDate: journey.travelDate || '',
@@ -135,7 +131,7 @@ function SmartAssistant() {
   const [travelPlan, setTravelPlan] = useState(null);
   const [planGenerated, setPlanGenerated] = useState(false);
 
-  // Pre-fill form when journey context changes
+
   useEffect(() => {
     if (journey.destination && !formData.destination) {
       setFormData((prev) => ({ ...prev, destination: journey.destination }));
@@ -151,7 +147,7 @@ function SmartAssistant() {
     }
   }, [journey]);
 
-  // ---- Validation ----
+
   const validateForm = () => {
     const errors = {};
     if (!formData.destination.trim()) {
@@ -172,7 +168,7 @@ function SmartAssistant() {
     return errors;
   };
 
-  // ---- Toggle interests ----
+
   const toggleInterest = (interest) => {
     setFormData((prev) => ({
       ...prev,
@@ -182,7 +178,7 @@ function SmartAssistant() {
     }));
   };
 
-  // ---- Generate travel plan ----
+
   const handleGeneratePlan = (e) => {
     e.preventDefault();
     const errors = validateForm();
@@ -190,7 +186,7 @@ function SmartAssistant() {
 
     if (Object.keys(errors).length > 0) return;
 
-    // Update global journey context
+
     updateJourney({
       destination: formData.destination,
       travelDate: formData.travelDate,
@@ -198,17 +194,17 @@ function SmartAssistant() {
       interests: formData.interests,
     });
 
-    // Find destination data
+
     const dest = destinations.find(
       (d) => d.name.toLowerCase() === formData.destination.trim().toLowerCase()
     );
 
-    // Build the plan
+
     const plan = generateTravelPlan(dest, formData);
     setTravelPlan(plan);
     setPlanGenerated(true);
 
-    // Set checklist in context
+
     const checklistItems = plan.packing.map((text, index) => ({
       id: `chk-${index}`,
       text,
@@ -217,7 +213,7 @@ function SmartAssistant() {
     setFullChecklist(checklistItems);
   };
 
-  // ---- Plan Generator Logic ----
+
   const generateTravelPlan = (dest, form) => {
     const plan = {
       destination: form.destination,
@@ -229,7 +225,7 @@ function SmartAssistant() {
       food: [],
     };
 
-    // A. Packing Checklist
+
     plan.packing = [
       'Valid ID proof (Aadhar, Passport, or Driving License)',
       'Printed or digital train ticket / PNR',
@@ -277,7 +273,7 @@ function SmartAssistant() {
       ];
     }
 
-    // C. Arrival Checklist
+
     plan.arrivalChecklist = [
       'Confirm your accommodation address and directions from the station.',
       'Save the local emergency helpline numbers.',
@@ -292,7 +288,7 @@ function SmartAssistant() {
       plan.arrivalChecklist.push('Confirm your meeting venue and travel time from the station.');
     }
 
-    // D. Transportation
+
     if (dest) {
       plan.transportation = dest.transportation;
     } else {
@@ -302,7 +298,7 @@ function SmartAssistant() {
       ];
     }
 
-    // E. Places to Visit
+
     if (dest) {
       let places = dest.attractions;
       if (form.interests.length > 0) {
@@ -336,7 +332,7 @@ function SmartAssistant() {
       </div>
 
       <div className="container assistant-container" style={{ maxWidth: 900 }}>
-        {/* Journey Banner — shown if journey exists */}
+        { }
         {journey.selectedTrain && (
           <div className="journey-banner">
             <span className="jb-icon">🚆</span>
