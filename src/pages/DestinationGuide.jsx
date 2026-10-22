@@ -1,3 +1,4 @@
+
 import { useParams, Link } from 'react-router-dom';
 import stationsData from '../data/stations';
 import '../styles/community.css';
