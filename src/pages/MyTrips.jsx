@@ -1,242 +1,144 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useJourney } from '../context/JourneyContext';
-import '../styles/mytrips.css';
+import '../styles/profile.css';
 
-/**
- * MyTrips — Connected travel dashboard showing the current journey,
- * saved attractions, travel checklist, and quick action buttons.
- */
 function MyTrips() {
   const navigate = useNavigate();
-  const {
-    journey,
-    savedAttractions,
-    removeAttraction,
-    checklist,
-    toggleChecklistItem,
-  } = useJourney();
+  const [bookings, setBookings] = useState([]);
 
-  const hasJourney = journey.destination || journey.source || journey.selectedTrain;
-  const hasSavedPlaces = savedAttractions.length > 0;
-  const hasChecklist = checklist.length > 0;
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('railmate_bookings') || '[]');
+    setBookings(saved);
+  }, []);
 
-  const categoryIcons = {
-    'History and Heritage': '🏛️',
-    Nature: '🌿',
-    Shopping: '🛍️',
-    'Family-Friendly': '👨‍👩‍👧‍👦',
-  };
+  const upcomingTrips = bookings.filter((b) => {
+    if (b.status === 'Cancelled') return false;
+    const tripDate = new Date(b.date);
+    return tripDate >= new Date(new Date().toDateString());
+  });
+
+  const pastTrips = bookings.filter((b) => {
+    const tripDate = new Date(b.date);
+    return tripDate < new Date(new Date().toDateString()) || b.status === 'Cancelled';
+  });
 
   return (
-    <main className="mytrips-page">
+    <main className="trips-page">
       <div className="page-header">
-        <h1>📋 My Trip</h1>
-        <p>Your journey details, saved places, and travel checklist</p>
+        <h1>🗺️ My Trips</h1>
+        <p>Track your upcoming and past railway journeys</p>
       </div>
 
-      <div className="container mytrips-container">
-        {/* A. Selected Journey */}
-        <div className="trip-section-card card">
-          <div className="trip-section-header">
-            <span className="section-icon">🚆</span>
-            <h3>Selected Journey</h3>
-          </div>
-
-          {hasJourney ? (
-            <div className="journey-summary-grid">
-              {journey.source && (
-                <div className="journey-detail">
-                  <label>From</label>
-                  <p>{journey.source}</p>
-                </div>
-              )}
-              {journey.destination && (
-                <div className="journey-detail">
-                  <label>To</label>
-                  <p>{journey.destination}</p>
-                </div>
-              )}
-              {journey.selectedTrain && (
-                <div className="journey-detail">
-                  <label>Train</label>
-                  <p>{journey.selectedTrain.name}</p>
-                </div>
-              )}
-              {journey.travelDate && (
-                <div className="journey-detail">
-                  <label>Travel Date</label>
-                  <p>{journey.travelDate}</p>
-                </div>
-              )}
-              {journey.arrivalTime && (
-                <div className="journey-detail">
-                  <label>Arrival</label>
-                  <p>{journey.arrivalTime}</p>
-                </div>
-              )}
-              {journey.travelPurpose && (
-                <div className="journey-detail">
-                  <label>Purpose</label>
-                  <p>{journey.travelPurpose}</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="trip-empty">
-              <div className="empty-icon">🗺️</div>
-              <p>No journey selected yet. Search for a train or use the Travel Assistant to set up your trip.</p>
+      <div className="container">
+        {/* Upcoming Trips */}
+        <h2 style={{ color: 'var(--primary)', marginBottom: '1rem' }}>🚆 Upcoming Trips</h2>
+        <div className="bookings-list">
+          {upcomingTrips.length === 0 ? (
+            <div className="empty-state">
+              <div className="icon">🗺️</div>
+              <h3>No upcoming trips</h3>
+              <p>Book a train to see your upcoming journeys here.</p>
               <button
                 className="btn btn-primary"
                 style={{ marginTop: '1rem' }}
                 onClick={() => navigate('/trains')}
               >
-                🔍 Search Trains
+                Search Trains
               </button>
             </div>
-          )}
-        </div>
-
-        {/* B. Saved Places */}
-        <div className="trip-section-card card">
-          <div className="trip-section-header">
-            <span className="section-icon">📍</span>
-            <h3>Saved Places</h3>
-            {hasSavedPlaces && (
-              <span className="section-count">{savedAttractions.length} place{savedAttractions.length !== 1 ? 's' : ''}</span>
-            )}
-          </div>
-
-          {hasSavedPlaces ? (
-            <div className="saved-attractions-list">
-              {savedAttractions.map((attraction) => (
-                <div key={`${attraction.id}-${attraction.destination}`} className="saved-attraction-item card">
-                  <img
-                    src={attraction.image || `/images/attractions/${attraction.id}.jpg`}
-                    alt={attraction.name}
-                    className="sa-thumb"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      const fallback = e.currentTarget.parentElement.querySelector('.sa-icon');
-                      if (fallback) fallback.style.display = 'flex';
-                    }}
-                  />
-                  <span className="sa-icon" style={{ display: 'none' }}>
-                    {categoryIcons[attraction.category] || '📍'}
-                  </span>
-                  <div className="sa-info">
-                    <h4>{attraction.name}</h4>
-                    <div className="sa-meta">
-                      <span>📍 {attraction.destination}</span>
-                      <span>• {attraction.category}</span>
+          ) : (
+            upcomingTrips.map((trip) => (
+              <div key={trip.id} className="booking-item card">
+                <div className="booking-item-header">
+                  <div>
+                    <div className="booking-train">{trip.trainName}</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                      #{trip.trainNumber}
                     </div>
                   </div>
+                  <span className="badge badge-success">Upcoming</span>
+                </div>
+                <div className="booking-item-details">
+                  <div className="detail">
+                    <label>From</label>
+                    <p>{trip.source}</p>
+                  </div>
+                  <div className="detail">
+                    <label>To</label>
+                    <p>{trip.destination}</p>
+                  </div>
+                  <div className="detail">
+                    <label>Date</label>
+                    <p>{trip.date}</p>
+                  </div>
+                  <div className="detail">
+                    <label>Class</label>
+                    <p>{trip.travelClass}</p>
+                  </div>
+                  <div className="detail">
+                    <label>Passenger</label>
+                    <p>{trip.passengerName}</p>
+                  </div>
+                  <div className="detail">
+                    <label>Fare</label>
+                    <p>₹{trip.fare}</p>
+                  </div>
+                </div>
+                <div className="booking-item-footer">
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    Booking ID: {trip.id}
+                  </span>
                   <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => removeAttraction(attraction.id, attraction.destination)}
-                    aria-label={`Remove ${attraction.name}`}
+                    className="btn btn-outline btn-sm"
+                    onClick={() => navigate(`/destination/${trip.destination.toLowerCase()}`)}
                   >
-                    ✕ Remove
+                    📍 Destination Guide
                   </button>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="trip-empty">
-              <div className="empty-icon">📍</div>
-              <p>No places saved yet. Explore a destination guide and add attractions to your trip.</p>
-            </div>
+              </div>
+            ))
           )}
         </div>
 
-        {/* C. Travel Checklist */}
-        <div className="trip-section-card card">
-          <div className="trip-section-header">
-            <span className="section-icon">✅</span>
-            <h3>Travel Checklist</h3>
-            {hasChecklist && (
-              <span className="section-count">
-                {checklist.filter((i) => i.checked).length}/{checklist.length} done
-              </span>
-            )}
-          </div>
-
-          {hasChecklist ? (
-            <div className="checklist-list">
-              {checklist.map((item) => (
-                <div
-                  key={item.id}
-                  className={`checklist-item ${item.checked ? 'checked' : ''}`}
-                  onClick={() => toggleChecklistItem(item.id)}
-                  role="checkbox"
-                  aria-checked={item.checked}
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      toggleChecklistItem(item.id);
-                    }
-                  }}
-                >
-                  <span className="check-box">{item.checked ? '✓' : ''}</span>
-                  <span className="check-text">{item.text}</span>
+        {/* Past Trips */}
+        <h2 style={{ color: 'var(--text-light)', margin: '2rem 0 1rem' }}>📜 Past Trips</h2>
+        <div className="bookings-list">
+          {pastTrips.length === 0 ? (
+            <div className="empty-state">
+              <div className="icon">📜</div>
+              <p style={{ color: 'var(--text-muted)' }}>No past trips to show.</p>
+            </div>
+          ) : (
+            pastTrips.map((trip) => (
+              <div key={trip.id} className="booking-item card" style={{ opacity: 0.75 }}>
+                <div className="booking-item-header">
+                  <div>
+                    <div className="booking-train">{trip.trainName}</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                      #{trip.trainNumber}
+                    </div>
+                  </div>
+                  <span className={`badge ${trip.status === 'Cancelled' ? 'badge-error' : 'badge-success'}`}>
+                    {trip.status === 'Cancelled' ? 'Cancelled' : 'Completed'}
+                  </span>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="trip-empty">
-              <div className="empty-icon">📝</div>
-              <p>No checklist yet. Use the Travel Assistant to generate a personalized packing checklist.</p>
-              <button
-                className="btn btn-primary"
-                style={{ marginTop: '1rem' }}
-                onClick={() => navigate('/assistant')}
-              >
-                🤖 Open Travel Assistant
-              </button>
-            </div>
+                <div className="booking-item-details">
+                  <div className="detail">
+                    <label>Route</label>
+                    <p>{trip.source} → {trip.destination}</p>
+                  </div>
+                  <div className="detail">
+                    <label>Date</label>
+                    <p>{trip.date}</p>
+                  </div>
+                  <div className="detail">
+                    <label>Fare</label>
+                    <p>₹{trip.fare}</p>
+                  </div>
+                </div>
+              </div>
+            ))
           )}
-        </div>
-
-        {/* D. Quick Actions */}
-        <div className="trip-section-card card">
-          <div className="trip-section-header">
-            <span className="section-icon">⚡</span>
-            <h3>Quick Actions</h3>
-          </div>
-
-          <div className="quick-actions">
-            {journey.destination && (
-              <button
-                className="quick-action-btn"
-                onClick={() => navigate(`/destination/${encodeURIComponent(journey.destination)}`)}
-              >
-                <span className="qa-icon">🗺️</span>
-                <span className="qa-label">Explore Destination</span>
-              </button>
-            )}
-            <button
-              className="quick-action-btn"
-              onClick={() => navigate('/assistant')}
-            >
-              <span className="qa-icon">🤖</span>
-              <span className="qa-label">Travel Assistant</span>
-            </button>
-            <button
-              className="quick-action-btn"
-              onClick={() => navigate('/trains')}
-            >
-              <span className="qa-icon">🚆</span>
-              <span className="qa-label">Search Trains</span>
-            </button>
-            <button
-              className="quick-action-btn"
-              onClick={() => navigate('/stations')}
-            >
-              <span className="qa-icon">🚉</span>
-              <span className="qa-label">Station Guide</span>
-            </button>
-          </div>
         </div>
       </div>
     </main>
