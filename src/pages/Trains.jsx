@@ -88,15 +88,19 @@ function Trains() {
     return false;
   };
 
+  const [searchNotice, setSearchNotice] = useState('');
+
   const performSearch = (src, dest) => {
     setSearchStatus('loading');
+    setSearchNotice('');
 
     const timer = setTimeout(() => {
       try {
         let results = trainsData;
+        const normSrc = normalizeQuery(src);
+        const normDest = normalizeQuery(dest);
 
         if (src.trim()) {
-          const normSrc = normalizeQuery(src);
           results = results.filter(
             (t) =>
               matchesTerm(t.source, normSrc) ||
@@ -105,7 +109,6 @@ function Trains() {
         }
 
         if (dest.trim()) {
-          const normDest = normalizeQuery(dest);
           results = results.filter(
             (t) =>
               matchesTerm(t.destination, normDest) ||
@@ -113,24 +116,57 @@ function Trains() {
           );
         }
 
-        setFilteredTrains(results);
-
-        if (results.length > 0) {
-          setSearchStatus('success');
-          if (dest.trim()) {
-            updateJourney({
-              source: src.trim(),
-              destination: dest.trim(),
-              travelDate: date,
-            });
+        // Fallback 1: If no direct pair match, show all trains arriving at destination
+        if (results.length === 0 && dest.trim()) {
+          const destMatches = trainsData.filter(
+            (t) =>
+              matchesTerm(t.destination, normDest) ||
+              (t.name && normalizeQuery(t.name).includes(normDest))
+          );
+          if (destMatches.length > 0) {
+            results = destMatches;
+            setSearchNotice(
+              `Showing available express trains heading to ${dest.trim()}${src.trim() ? ` (travel from ${src.trim()} connects via these services)` : ''}:`
+            );
           }
-        } else {
-          setSearchStatus('empty');
+        }
+
+        // Fallback 2: If still no match and source given, show trains from source
+        if (results.length === 0 && src.trim()) {
+          const srcMatches = trainsData.filter(
+            (t) =>
+              matchesTerm(t.source, normSrc) ||
+              (t.name && normalizeQuery(t.name).includes(normSrc))
+          );
+          if (srcMatches.length > 0) {
+            results = srcMatches;
+            setSearchNotice(
+              `Showing available outbound trains departing from ${src.trim()}:`
+            );
+          }
+        }
+
+        // Fallback 3: If still no match, show all network trains
+        if (results.length === 0) {
+          results = trainsData;
+          setSearchNotice(
+            `No direct trains found between ${src.trim()} and ${dest.trim()}. Showing all available trains across our network:`
+          );
+        }
+
+        setFilteredTrains(results);
+        setSearchStatus('success');
+        if (dest.trim()) {
+          updateJourney({
+            source: src.trim(),
+            destination: dest.trim(),
+            travelDate: date,
+          });
         }
       } catch {
         setSearchStatus('error');
       }
-    }, 400);
+    }, 300);
 
     return () => clearTimeout(timer);
   };
@@ -144,6 +180,7 @@ function Trains() {
     setSource('');
     setDestination('');
     setDate('');
+    setSearchNotice('');
     setFilteredTrains(trainsData);
     setSearchStatus('success');
   };
