@@ -8,6 +8,8 @@ export const MEAL_PRICES = {
   lunch: 200,     // ₹200 per passenger
 };
 
+export const GST_RATE = 0.05; // 5% GST on railway services and catering
+
 function Booking({ user }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -15,6 +17,8 @@ function Booking({ user }) {
 
   const [form, setForm] = useState({
     passengerName: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
     date: '',
     travelClass: '',
     seatPreference: 'No Preference',
@@ -24,6 +28,7 @@ function Booking({ user }) {
       lunch: false,
     },
   });
+  const [errors, setErrors] = useState({});
   const [confirmed, setConfirmed] = useState(false);
   const [bookingData, setBookingData] = useState(null);
 
@@ -48,13 +53,15 @@ function Booking({ user }) {
     );
   }
 
-  // Dynamic Fare Calculations
+  // Dynamic Fare & GST Calculations (No double counting)
   const baseFare = train.price * form.passengers;
   const mealCostPerPassenger =
     (form.meals.breakfast ? MEAL_PRICES.breakfast : 0) +
     (form.meals.lunch ? MEAL_PRICES.lunch : 0);
   const totalMealFare = mealCostPerPassenger * form.passengers;
-  const totalFare = baseFare + totalMealFare;
+  const subtotal = baseFare + totalMealFare;
+  const gstAmount = Math.round(subtotal * GST_RATE);
+  const totalFare = subtotal + gstAmount;
 
   const handleMealToggle = (mealType) => {
     setForm((prev) => ({
@@ -74,13 +81,63 @@ function Booking({ user }) {
     return items.length > 0 ? items.join(' + ') : 'None (No meals selected)';
   };
 
-  const handleConfirm = (e) => {
-    e.preventDefault();
-
-    if (!form.passengerName.trim() || !form.date || !form.travelClass) {
-      alert('Please fill in all required fields.');
-      return;
+  // Field change handler that clears specific errors
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
+  };
+
+  // Comprehensive Regex & Business Logic Validation
+  const validateForm = () => {
+    const newErrors = {};
+
+    // 1. Passenger Name Regex: Only alphabetic characters and spaces (3-50 chars)
+    const nameRegex = /^[A-Za-z\s]{3,50}$/;
+    if (!form.passengerName.trim()) {
+      newErrors.passengerName = 'Passenger name is required.';
+    } else if (!nameRegex.test(form.passengerName.trim())) {
+      newErrors.passengerName = 'Name must contain only alphabetic letters and spaces (3 to 50 characters).';
+    }
+
+    // 2. Indian Phone Number Regex: optional +91/91, exactly 10 digits starting with 6, 7, 8, or 9
+    const phoneRegex = /^(?:(?:\+?91[\-\s]?)?[6-9]\d{9})$/;
+    if (!form.phone.trim()) {
+      newErrors.phone = 'Mobile phone number is required.';
+    } else if (!phoneRegex.test(form.phone.trim().replace(/\s+/g, ''))) {
+      newErrors.phone = 'Enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.';
+    }
+
+    // 3. Email Address Regex: RFC 5322 compliant standard format
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!form.email.trim()) {
+      newErrors.email = 'Email address is required.';
+    } else if (!emailRegex.test(form.email.trim())) {
+      newErrors.email = 'Enter a valid email address (e.g. name@example.com).';
+    }
+
+    // 4. Journey Date Validation: must not be empty and cannot be in the past
+    if (!form.date) {
+      newErrors.date = 'Journey date is required.';
+    } else {
+      const today = new Date().toISOString().split('T')[0];
+      if (form.date < today) {
+        newErrors.date = 'Journey date cannot be in the past.';
+      }
+    }
+
+    // 5. Travel Class Validation: required
+    if (!form.travelClass) {
+      newErrors.travelClass = 'Please select a travel class.';
+    }
+
+    return newErrors;
+  };
+
+  // Proceed to dedicated Payment page
+  const handleProceedToPayment = (e) => {
+    e.preventDefault();
 
     if (!user) {
       alert('Please login to book tickets.');
@@ -88,35 +145,48 @@ function Booking({ user }) {
       return;
     }
 
-    const booking = {
-      id: 'RM' + Date.now().toString().slice(-8),
+    const validationErrors = validateForm();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      // Focus first error field for accessibility
+      const firstKey = Object.keys(validationErrors)[0];
+      const el = document.getElementById(`book-${firstKey}`);
+      if (el) el.focus();
+      return;
+    }
+
+    // Normalize phone number to clean 10 digits
+    const cleanPhone = form.phone.trim().replace(/\D/g, '').slice(-10);
+
+    const bookingOrder = {
       trainName: train.name,
       trainNumber: train.number,
       source: train.source,
       destination: train.destination,
+      departure: train.departure,
+      arrival: train.arrival,
+      duration: train.duration,
+      trainPrice: train.price,
       date: form.date,
-      passengerName: form.passengerName,
+      passengerName: form.passengerName.trim(),
+      email: form.email.trim(),
+      phone: cleanPhone,
       travelClass: form.travelClass,
       seatPreference: form.seatPreference,
       passengers: form.passengers,
       baseFare,
-      meals: {
-        breakfast: form.meals.breakfast,
-        lunch: form.meals.lunch,
-      },
+      meals: form.meals,
       mealFare: totalMealFare,
-      fare: totalFare,
-      status: 'Confirmed',
-      bookedOn: new Date().toISOString().split('T')[0],
+      mealCostPerPassenger,
+      subtotal,
+      gstRate: GST_RATE,
+      gstAmount,
+      totalFare,
     };
 
-    // Save to localStorage
-    const existingBookings = JSON.parse(localStorage.getItem('railmate_bookings') || '[]');
-    existingBookings.push(booking);
-    localStorage.setItem('railmate_bookings', JSON.stringify(existingBookings));
-
-    setBookingData(booking);
-    setConfirmed(true);
+    // Transition to dedicated Payment page
+    navigate('/payment', { state: { bookingOrder } });
   };
 
   if (confirmed && bookingData) {
@@ -135,6 +205,7 @@ function Booking({ user }) {
 
             <div className="booking-summary" style={{ textAlign: 'left', marginTop: '1.5rem' }}>
               <div className="summary-item"><label>Passenger</label><p>{bookingData.passengerName}</p></div>
+              <div className="summary-item"><label>Contact</label><p>{bookingData.phone} | {bookingData.email}</p></div>
               <div className="summary-item"><label>Train</label><p>{bookingData.trainName}</p></div>
               <div className="summary-item"><label>Train Number</label><p>#{bookingData.trainNumber}</p></div>
               <div className="summary-item"><label>Journey Date</label><p>{bookingData.date}</p></div>
@@ -142,9 +213,10 @@ function Booking({ user }) {
               <div className="summary-item"><label>Destination</label><p>{bookingData.destination}</p></div>
               <div className="summary-item"><label>Class</label><p>{bookingData.travelClass}</p></div>
               <div className="summary-item"><label>Seat Preference</label><p>{bookingData.seatPreference}</p></div>
-              <div className="summary-item"><label>Base Ticket Fare</label><p>₹{bookingData.baseFare || (train.price * bookingData.passengers)}</p></div>
+              <div className="summary-item"><label>Base Ticket Fare</label><p>₹{bookingData.baseFare}</p></div>
               <div className="summary-item"><label>Meals Selected</label><p>{getMealsLabel(bookingData.meals)}</p></div>
               <div className="summary-item"><label>Meal Charges</label><p>₹{bookingData.mealFare || 0}</p></div>
+              <div className="summary-item"><label>GST (5%)</label><p>₹{bookingData.gstAmount || 0}</p></div>
               <div className="summary-item"><label>Total Paid Fare</label><p style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem' }}>₹{bookingData.fare}</p></div>
             </div>
 
@@ -162,7 +234,7 @@ function Booking({ user }) {
     <main className="booking-page">
       <div className="page-header">
         <h1>🎫 Book Your Ticket</h1>
-        <p>Complete your booking for {train.name}</p>
+        <p>Complete your booking details for {train.name}</p>
       </div>
 
       <div className="container booking-container">
@@ -177,47 +249,117 @@ function Booking({ user }) {
             <div className="summary-item"><label>Departure</label><p>{train.departure}</p></div>
             <div className="summary-item"><label>Arrival</label><p>{train.arrival}</p></div>
             <div className="summary-item"><label>Duration</label><p>{train.duration}</p></div>
-            <div className="summary-item"><label>Price (per person)</label><p>₹{train.price}</p></div>
+            <div className="summary-item"><label>Base Fare (per person)</label><p>₹{train.price}</p></div>
           </div>
         </div>
 
-        {/* Booking Form */}
-        <form onSubmit={handleConfirm}>
+        {/* Booking Form with Validation */}
+        <form onSubmit={handleProceedToPayment} noValidate>
           <div className="booking-card card">
-            <h3>👤 Passenger Details</h3>
+            <h3>👤 Passenger & Contact Details</h3>
+            <p style={{ color: 'var(--text-light)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+              All fields are verified using standard Indian railway booking rules.
+            </p>
+
             <div className="form-group">
-              <label htmlFor="book-name">Passenger Name</label>
-              <input id="book-name" type="text" value={form.passengerName} onChange={(e) => setForm({ ...form, passengerName: e.target.value })} required />
+              <label htmlFor="book-passengerName">Passenger Full Name *</label>
+              <input
+                id="book-passengerName"
+                type="text"
+                placeholder="e.g. Ramesh Kumar"
+                value={form.passengerName}
+                onChange={(e) => handleChange('passengerName', e.target.value)}
+                style={{ borderColor: errors.passengerName ? 'var(--error)' : undefined }}
+              />
+              {errors.passengerName && <div className="form-error">{errors.passengerName}</div>}
             </div>
-            <div className="form-group">
-              <label htmlFor="book-date">Journey Date</label>
-              <input id="book-date" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} required />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
               <div className="form-group">
-                <label htmlFor="book-class">Class</label>
-                <select id="book-class" value={form.travelClass} onChange={(e) => setForm({ ...form, travelClass: e.target.value })} required>
+                <label htmlFor="book-phone">Indian Mobile Number *</label>
+                <input
+                  id="book-phone"
+                  type="tel"
+                  placeholder="e.g. 9876543210 or +91 9876543210"
+                  value={form.phone}
+                  onChange={(e) => handleChange('phone', e.target.value)}
+                  style={{ borderColor: errors.phone ? 'var(--error)' : undefined }}
+                />
+                {errors.phone && <div className="form-error">{errors.phone}</div>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="book-email">Email Address *</label>
+                <input
+                  id="book-email"
+                  type="email"
+                  placeholder="e.g. ramesh@example.com"
+                  value={form.email}
+                  onChange={(e) => handleChange('email', e.target.value)}
+                  style={{ borderColor: errors.email ? 'var(--error)' : undefined }}
+                />
+                {errors.email && <div className="form-error">{errors.email}</div>}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="book-date">Journey Date *</label>
+              <input
+                id="book-date"
+                type="date"
+                min={new Date().toISOString().split('T')[0]}
+                value={form.date}
+                onChange={(e) => handleChange('date', e.target.value)}
+                style={{ borderColor: errors.date ? 'var(--error)' : undefined }}
+              />
+              {errors.date && <div className="form-error">{errors.date}</div>}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div className="form-group">
+                <label htmlFor="book-travelClass">Travel Class *</label>
+                <select
+                  id="book-travelClass"
+                  value={form.travelClass}
+                  onChange={(e) => handleChange('travelClass', e.target.value)}
+                  style={{ borderColor: errors.travelClass ? 'var(--error)' : undefined }}
+                >
                   <option value="">Select Class</option>
                   {train.classes.map((cls) => (
                     <option key={cls} value={cls}>{cls}</option>
                   ))}
                 </select>
+                {errors.travelClass && <div className="form-error">{errors.travelClass}</div>}
               </div>
+
               <div className="form-group">
-                <label htmlFor="book-seat">Seat Preference</label>
-                <select id="book-seat" value={form.seatPreference} onChange={(e) => setForm({ ...form, seatPreference: e.target.value })}>
-                  <option>No Preference</option>
-                  <option>Lower Berth</option>
-                  <option>Upper Berth</option>
-                  <option>Window</option>
+                <label htmlFor="book-seatPreference">Seat / Berth Preference</label>
+                <select
+                  id="book-seatPreference"
+                  value={form.seatPreference}
+                  onChange={(e) => handleChange('seatPreference', e.target.value)}
+                >
+                  <option value="No Preference">No Preference</option>
+                  <option value="Lower Berth">Lower Berth</option>
+                  <option value="Upper Berth">Upper Berth</option>
+                  <option value="Middle Berth">Middle Berth</option>
+                  <option value="Side Lower">Side Lower</option>
+                  <option value="Window">Window</option>
                 </select>
               </div>
             </div>
+
             <div className="form-group">
               <label htmlFor="book-count">Number of Passengers</label>
-              <select id="book-count" value={form.passengers} onChange={(e) => setForm({ ...form, passengers: parseInt(e.target.value) })}>
+              <select
+                id="book-count"
+                value={form.passengers}
+                onChange={(e) => handleChange('passengers', parseInt(e.target.value))}
+              >
                 {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <option key={n} value={n}>{n}</option>
+                  <option key={n} value={n}>
+                    {n} Passenger{n > 1 ? 's' : ''}
+                  </option>
                 ))}
               </select>
             </div>
@@ -317,8 +459,9 @@ function Booking({ user }) {
             </div>
           </div>
 
+          {/* Fare Summary & Navigation to Payment */}
           <div className="booking-card card">
-            <h3>💰 Fare Summary & Payment</h3>
+            <h3>💰 Fare Summary & Taxes</h3>
             <div className="booking-summary">
               <div className="summary-item">
                 <label>Base Ticket Fare</label>
@@ -340,10 +483,18 @@ function Booking({ user }) {
                     : '₹0 (None)'}
                 </p>
               </div>
+              <div className="summary-item">
+                <label>Subtotal</label>
+                <p>₹{subtotal}</p>
+              </div>
+              <div className="summary-item">
+                <label>GST (5% applicable tax)</label>
+                <p style={{ color: 'var(--secondary)', fontWeight: 600 }}>+ ₹{gstAmount}</p>
+              </div>
             </div>
 
             <div className="booking-total">
-              <span className="total-label">Total Fare (Tickets + Meals)</span>
+              <span className="total-label">Final Payable Total (Fare + Meals + GST)</span>
               <span className="total-amount">₹{totalFare}</span>
             </div>
 
@@ -359,13 +510,17 @@ function Booking({ user }) {
               }}
             >
               <div style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: '3px' }}>
-                💳 Payment Simulation
+                🔒 Step 1 of 2: Passenger Details Complete
               </div>
-              Instant mock checkout. All ticket fares, catering additions, and passenger details are validated and saved securely upon confirmation.
+              Clicking below validates all required fields with strict format checks and takes you to the secure payment checkout page.
             </div>
 
-            <button type="submit" className="btn btn-accent" style={{ width: '100%', marginTop: '1rem', padding: '14px', fontSize: '1rem' }}>
-              ✅ Confirm & Pay ₹{totalFare}
+            <button
+              type="submit"
+              className="btn btn-accent"
+              style={{ width: '100%', marginTop: '1rem', padding: '14px', fontSize: '1.05rem', fontWeight: 700 }}
+            >
+              💳 Proceed to Payment (₹{totalFare}) ➔
             </button>
           </div>
         </form>

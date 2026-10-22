@@ -58,6 +58,9 @@ function MyBookings({ user }) {
 
                 <div className="booking-item-details">
                   <div className="detail"><label>Booking ID</label><p>{booking.id}</p></div>
+                  {booking.pnr && (
+                    <div className="detail"><label>PNR</label><p style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--secondary)' }}>{booking.pnr}</p></div>
+                  )}
                   <div className="detail"><label>Source</label><p>{booking.source}</p></div>
                   <div className="detail"><label>Destination</label><p>{booking.destination}</p></div>
                   <div className="detail"><label>Date</label><p>{booking.date}</p></div>
@@ -74,11 +77,16 @@ function MyBookings({ user }) {
                         : 'None'}
                     </p>
                   </div>
-                  <div className="detail"><label>Fare</label><p>₹{booking.fare}</p></div>
+                  {booking.gstAmount ? (
+                    <div className="detail"><label>GST (5%)</label><p style={{ color: 'var(--secondary)' }}>₹{booking.gstAmount}</p></div>
+                  ) : null}
+                  <div className="detail"><label>Total Paid</label><p style={{ fontWeight: 700, color: 'var(--primary)' }}>₹{booking.fare}</p></div>
                 </div>
 
                 <div className="booking-item-footer">
-                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Booked on: {booking.bookedOn}</span>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    Booked on: {booking.bookedOn} {booking.paymentMethod ? `• via ${booking.paymentMethod}` : ''}
+                  </span>
                   {booking.status === 'Confirmed' && (
                     <button className="btn btn-danger btn-sm" onClick={() => handleCancel(booking.id)}>
                       Cancel Booking
