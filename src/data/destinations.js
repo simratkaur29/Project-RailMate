@@ -27,7 +27,7 @@ const destinations = [
         "id": "ndl-3",
         "name": "India Gate",
         "image": "/images/attractions/ndl-3.jpg",
-        "description": "A war memorial and landmark on Rajpath, surrounded by lush green lawns — ideal for an evening walk.",
+        "description": "A war memorial and landmark on the  Rajpath, surrounded by lush green lawns — ideal for an evening walk.",
         "category": "History and Heritage"
       },
       {

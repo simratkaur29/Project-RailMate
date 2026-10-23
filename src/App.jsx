@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { JourneyProvider } from './context/JourneyContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import LoginPromptModal from './components/LoginPromptModal';
 import Home from './pages/Home';
 import Trains from './pages/Trains';
 import Login from './pages/Login';
@@ -46,6 +47,7 @@ function App() {
       <JourneyProvider>
         <div className="app">
           <Navbar user={user} onLogout={handleLogout} />
+          <LoginPromptModal />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/trains" element={<Trains />} />

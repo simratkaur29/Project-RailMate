@@ -63,11 +63,11 @@ function DestinationGuide() {
   }, [destinationName]);
 
   // ---- Handle save/remove toggle ----
-  const handleToggleSave = (attraction, destName) => {
-    if (isAttractionSaved(attraction.id, destName)) {
-      removeAttraction(attraction.id, destName);
+  const handleToggleSave = (attraction) => {
+    if (isAttractionSaved(attraction.name)) {
+      removeAttraction(attraction.name);
     } else {
-      addAttraction(attraction, destName);
+      addAttraction(attraction);
     }
   };
 
@@ -266,7 +266,7 @@ function DestinationGuide() {
                   key={attraction.id}
                   attraction={attraction}
                   destinationName={destination.name}
-                  isSaved={isAttractionSaved(attraction.id, destination.name)}
+                  isSaved={isAttractionSaved(attraction.name)}
                   onToggleSave={handleToggleSave}
                 />
               ))
