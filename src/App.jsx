@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { JourneyProvider } from './context/JourneyContext';
+
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+
 import Home from './pages/Home';
 import Trains from './pages/Trains';
 import Login from './pages/Login';
@@ -17,6 +20,7 @@ import Community from './pages/Community';
 import RailwayTips from './pages/RailwayTips';
 import DestinationGuide from './pages/DestinationGuide';
 import MyTrips from './pages/MyTrips';
+
 import './styles/global.css';
 import './styles/profile.css';
 
@@ -24,16 +28,29 @@ function App() {
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('railmate_user');
     const loggedIn = localStorage.getItem('railmate_logged_in');
+
     if (saved && loggedIn === 'true') {
       return JSON.parse(saved);
     }
+
     return null;
   });
 
+  // Show popup whenever the app loads or refreshes
+  const [showLoginPopup, setShowLoginPopup] = useState(true);
+
   const handleLogin = (userData) => {
     setUser(userData);
-    localStorage.setItem('railmate_user', JSON.stringify(userData));
+
+    localStorage.setItem(
+      'railmate_user',
+      JSON.stringify(userData)
+    );
+
     localStorage.setItem('railmate_logged_in', 'true');
+
+    // Close popup after successful login
+    setShowLoginPopup(false);
   };
 
   const handleLogout = () => {
@@ -45,24 +62,113 @@ function App() {
     <Router>
       <JourneyProvider>
         <div className="app">
-          <Navbar user={user} onLogout={handleLogout} />
+
+          <Navbar
+            user={user}
+            onLogout={handleLogout}
+          />
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/trains" element={<Trains />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/register" element={<Register onLogin={handleLogin} />} />
-            <Route path="/profile" element={<Profile user={user} onLogin={handleLogin} onLogout={handleLogout} />} />
-            <Route path="/booking" element={<Booking user={user} />} />
-            <Route path="/payment" element={<Payment user={user} />} />
-            <Route path="/my-bookings" element={<MyBookings user={user} />} />
+
+            <Route
+              path="/login"
+              element={<Login onLogin={handleLogin} />}
+            />
+
+            <Route
+              path="/register"
+              element={<Register onLogin={handleLogin} />}
+            />
+
+            <Route
+              path="/profile"
+              element={
+                <Profile
+                  user={user}
+                  onLogin={handleLogin}
+                  onLogout={handleLogout}
+                />
+              }
+            />
+
+            <Route
+              path="/booking"
+              element={<Booking user={user} />}
+            />
+
+            <Route
+              path="/payment"
+              element={<Payment user={user} />}
+            />
+
+            <Route
+              path="/my-bookings"
+              element={<MyBookings user={user} />}
+            />
+
             <Route path="/stations" element={<StationGuide />} />
             <Route path="/assistant" element={<SmartAssistant />} />
-            <Route path="/community" element={<Community user={user} />} />
+
+            <Route
+              path="/community"
+              element={<Community user={user} />}
+            />
+
             <Route path="/tips" element={<RailwayTips />} />
-            <Route path="/destination/:city" element={<DestinationGuide />} />
+
+            <Route
+              path="/destination/:city"
+              element={<DestinationGuide />}
+            />
+
             <Route path="/my-trips" element={<MyTrips />} />
           </Routes>
+
+          {/* Login Popup */}
+          {showLoginPopup && (
+            <div
+              className="login-popup-overlay"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setShowLoginPopup(false);
+                }
+              }}
+            >
+              <div
+                className="login-popup-container"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Login to RAILMATE"
+              >
+                <button
+                  type="button"
+                  className="login-popup-close"
+                  onClick={() => setShowLoginPopup(false)}
+                  aria-label="Close login popup"
+                >
+                  &times;
+                </button>
+
+                <Login
+                  onLogin={handleLogin}
+                  isPopup={true}
+                />
+
+                <button
+                  type="button"
+                  className="continue-guest"
+                  onClick={() => setShowLoginPopup(false)}
+                >
+                  Continue as Guest
+                </button>
+              </div>
+            </div>
+          )}
+
           <Footer />
+
         </div>
       </JourneyProvider>
     </Router>
