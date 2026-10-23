@@ -59,7 +59,7 @@ function App() {
             <Route path="/assistant" element={<SmartAssistant />} />
             <Route path="/community" element={<Community user={user} />} />
             <Route path="/tips" element={<RailwayTips />} />
-            <Route path="/destination/:city" element={<DestinationGuide />} />
+            <Route path="/destination/:destinationName" element={<DestinationGuide />} />
             <Route path="/my-trips" element={<MyTrips />} />
           </Routes>
           <Footer />
