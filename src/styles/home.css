@@ -63,6 +63,32 @@
   margin: 0 auto;
 }
 
+.trip-type-selector .btn {
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.trip-type-selector .btn.btn-outline {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #ffffff !important;
+  backdrop-filter: blur(8px);
+}
+
+.trip-type-selector .btn.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.8);
+  color: #ffffff !important;
+}
+
+.trip-type-selector .btn.btn-primary {
+  background: var(--primary);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
 .search-form {
   background: rgba(13, 40, 71, 0.65);
   backdrop-filter: blur(14px);
