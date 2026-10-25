@@ -169,6 +169,7 @@ function Payment({ user }) {
             : paymentMethod === 'netbanking'
             ? `Net Banking (${selectedBank})`
             : `Wallet (${selectedWallet})`,
+        userEmail: user?.email || bookingOrder.email || '',
         status: 'Confirmed',
         bookedOn: new Date().toISOString().split('T')[0],
         bookedAt: new Date().toLocaleTimeString(),

@@ -62,7 +62,7 @@ function App() {
             <Route path="/community" element={<Community user={user} />} />
             <Route path="/tips" element={<RailwayTips />} />
             <Route path="/destination/:destinationName" element={<DestinationGuide />} />
-            <Route path="/my-trips" element={<MyTrips />} />
+            <Route path="/my-trips" element={<MyTrips user={user} />} />
           </Routes>
           <Footer />
         </div>

@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/userSlice';
 import '../styles/profile.css';
 
-function MyBookings({ user }) {
+function MyBookings({ user: propUser }) {
   const navigate = useNavigate();
+  const reduxUser = useSelector(selectUser);
+  const user = propUser !== undefined ? propUser : reduxUser;
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
@@ -12,15 +16,21 @@ function MyBookings({ user }) {
       return;
     }
     const saved = JSON.parse(localStorage.getItem('railmate_bookings') || '[]');
-    setBookings(saved);
+    const userBookings = saved.filter(
+      (b) => !b.userEmail || b.userEmail === user.email || b.email === user.email
+    );
+    setBookings(userBookings);
   }, [user, navigate]);
 
   const handleCancel = (bookingId) => {
-    const updated = bookings.map((b) =>
+    const allSaved = JSON.parse(localStorage.getItem('railmate_bookings') || '[]');
+    const updated = allSaved.map((b) =>
       b.id === bookingId ? { ...b, status: 'Cancelled' } : b
     );
-    setBookings(updated);
     localStorage.setItem('railmate_bookings', JSON.stringify(updated));
+    setBookings((prev) =>
+      prev.map((b) => (b.id === bookingId ? { ...b, status: 'Cancelled' } : b))
+    );
   };
 
   if (!user) return null;

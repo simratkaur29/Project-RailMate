@@ -1,15 +1,29 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/userSlice';
 import '../styles/profile.css';
 
-function MyTrips() {
+function MyTrips({ user: propUser }) {
   const navigate = useNavigate();
+  const reduxUser = useSelector(selectUser);
+  const user = propUser !== undefined ? propUser : reduxUser;
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     const saved = JSON.parse(localStorage.getItem('railmate_bookings') || '[]');
-    setBookings(saved);
-  }, []);
+    // Filter trips for the logged-in user
+    const userTrips = saved.filter(
+      (b) => !b.userEmail || b.userEmail === user.email || b.email === user.email
+    );
+    setBookings(userTrips);
+  }, [user, navigate]);
+
+  if (!user) return null;
 
   const upcomingTrips = bookings.filter((b) => {
     if (b.status === 'Cancelled') return false;

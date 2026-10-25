@@ -4,15 +4,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectUser, logout } from '../store/userSlice';
 import '../styles/navbar.css';
 
-function Navbar() {
+function Navbar({ user: propUser, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const user = useSelector(selectUser);
+  const reduxUser = useSelector(selectUser);
   const dispatch = useDispatch();
 
+  const user = propUser !== undefined ? propUser : reduxUser;
 
   const handleLogout = () => {
     dispatch(logout());
+    if (onLogout) onLogout();
     setMenuOpen(false);
     navigate('/');
   };
@@ -37,9 +39,11 @@ function Navbar() {
             <NavLink to="/assistant" onClick={() => setMenuOpen(false)}>Travel Assistant</NavLink>
             <NavLink to="/community" onClick={() => setMenuOpen(false)}>Community</NavLink>
             <NavLink to="/tips" onClick={() => setMenuOpen(false)}>Railway Tips</NavLink>
-            <NavLink to="/my-trips" onClick={() => setMenuOpen(false)}>My Trips</NavLink>
             {user && (
-              <NavLink to="/my-bookings" onClick={() => setMenuOpen(false)}>My Bookings</NavLink>
+              <>
+                <NavLink to="/my-trips" onClick={() => setMenuOpen(false)}>My Trips</NavLink>
+                <NavLink to="/my-bookings" onClick={() => setMenuOpen(false)}>My Bookings</NavLink>
+              </>
             )}
           </div>
 
