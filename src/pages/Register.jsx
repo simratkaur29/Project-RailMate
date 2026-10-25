@@ -29,17 +29,29 @@ function Register({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = validate();
+
+    // Check if user with this email already exists
+    const users = JSON.parse(localStorage.getItem('railmate_users') || '[]');
+    const emailNorm = form.email.trim().toLowerCase();
+    if (users.some((u) => u.email.toLowerCase() === emailNorm)) {
+      validationErrors.email = 'An account with this email already exists. Please log in.';
+    }
+
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      const user = {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
+      const newUser = {
+        name: form.name.trim(),
+        email: emailNorm,
+        phone: form.phone.trim(),
         password: form.password,
       };
-      localStorage.setItem('railmate_user', JSON.stringify(user));
-      onLogin(user);
+
+      users.push(newUser);
+      localStorage.setItem('railmate_users', JSON.stringify(users));
+      localStorage.setItem('railmate_user', JSON.stringify(newUser));
+      localStorage.setItem('railmate_logged_in', 'true');
+      onLogin(newUser);
       navigate('/profile');
     }
   };

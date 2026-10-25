@@ -38,6 +38,9 @@ function Profile({ user, onLogin, onLogout }) {
   const handleEditSave = () => {
     const updatedUser = { ...user, ...editForm };
     localStorage.setItem('railmate_user', JSON.stringify(updatedUser));
+    const users = JSON.parse(localStorage.getItem('railmate_users') || '[]');
+    const updatedUsers = users.map((u) => (u.email.toLowerCase() === user.email.toLowerCase() ? updatedUser : u));
+    localStorage.setItem('railmate_users', JSON.stringify(updatedUsers));
     onLogin(updatedUser);
     setEditing(false);
   };
@@ -57,6 +60,9 @@ function Profile({ user, onLogin, onLogout }) {
     }
     const updatedUser = { ...user, password: passwordForm.newPass };
     localStorage.setItem('railmate_user', JSON.stringify(updatedUser));
+    const users = JSON.parse(localStorage.getItem('railmate_users') || '[]');
+    const updatedUsers = users.map((u) => (u.email.toLowerCase() === user.email.toLowerCase() ? updatedUser : u));
+    localStorage.setItem('railmate_users', JSON.stringify(updatedUsers));
     onLogin(updatedUser);
     setPasswordForm({ current: '', newPass: '', confirm: '' });
     setPasswordMsg('Password changed successfully!');
